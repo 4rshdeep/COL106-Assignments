@@ -67,7 +67,7 @@ public class ArrayDequeue implements DequeInterface
         frontIndex = (frontIndex+1)%arrLen;
       }
       
-      temp[frontIndex] = o;
+      temp[size] = o;
       arrayDeq = temp;
 
       size += 1;
@@ -109,6 +109,7 @@ public class ArrayDequeue implements DequeInterface
     {
       int arrLen = arrayDeq.length;
       rearIndex = (rearIndex+arrLen-1)%arrLen;
+      size -= 1;
       return arrayDeq[rearIndex];
     }
   }
@@ -155,6 +156,10 @@ public class ArrayDequeue implements DequeInterface
         }
         f = (f+arrayDeq.length+1)%arrayDeq.length;
       }
+      if(size==0)
+      {
+        str.append("]");  
+      }
       return str.toString();
     }
   }
@@ -171,7 +176,7 @@ public class ArrayDequeue implements DequeInterface
     int size1 = myDeque.size();
     System.out.println("Size: " + size1);
     System.out.println(myDeque.toString());
-    
+
     if(size1 != 2*N){
       System.err.println("Incorrect size of the queue.");
     }

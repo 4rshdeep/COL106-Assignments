@@ -68,7 +68,7 @@ public class ArrayDequeue implements DequeInterface
         frontIndex = (frontIndex+1)%arrLen;
       }
       
-      temp[frontIndex] = o;
+      temp[size] = o;
       arrayDeq = temp;
 
       size += 1;
@@ -111,6 +111,7 @@ public class ArrayDequeue implements DequeInterface
     {
       int arrLen = arrayDeq.length;
       rearIndex = (rearIndex+arrLen-1)%arrLen;
+      size -= 1;
       return arrayDeq[rearIndex];
     }
   }
@@ -156,6 +157,10 @@ public class ArrayDequeue implements DequeInterface
           str.append(",");
         }
         f = (f+arrayDeq.length+1)%arrayDeq.length;
+      }
+      if(size==0)
+      {
+        str.append("]");
       }
       return str.toString();
     }
