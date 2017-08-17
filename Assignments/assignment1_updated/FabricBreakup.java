@@ -86,12 +86,12 @@ public class FabricBreakup
 					//System.out.println("Total of " + temp + " shirts removed.");
 					System.out.println(id + " " + temp);
 				}
+
 			}
-			/*for(i=0; i<=top; i++)
+			if(i==in-1)
 			{
-				System.out.print(clothesArray[i] + ", ");
+				input.close();
 			}
-			System.out.println();*/
 		}
 	}
 }
