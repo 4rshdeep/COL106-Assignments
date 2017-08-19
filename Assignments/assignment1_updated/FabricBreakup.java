@@ -24,26 +24,27 @@ public class FabricBreakup
 		favShirtIndex = -1;
 		top = -1;
 			maxLiking = -1;
-		}
+	}
 	
-		public static void main(String args[])
+	public static void main(String args[])
+	{
+		//if(args.length>0)
+		//
+		try
 		{
-			//if(args.length>0)
-			//
-			try
-			{
-				File file = new File(args[0]);
-				Scanner input = new Scanner(file);
-				//}
-			//else
-			//{
-			//	Scanner input = new Scanner(System.in);
-			//}
 			int id;
 			int mode;
 			int temp;
 			int temp1;
 			int likingValue;
+			File file = new File(args[0]);
+			Scanner input = new Scanner(file);
+			
+			//}
+			//else
+			//{
+			//	Scanner input = new Scanner(System.in);
+			//}
 			//System.out.println("Num of Operations");
 			int in = input.nextInt();
 			//System.out.println("Number of Operations is: " + in);
@@ -63,7 +64,8 @@ public class FabricBreakup
 					//System.out.println("Liking Value is " + likingValue);
 					if(likingValue>=maxLiking)
 					{
-						//System.out.println("Greater than Max Liking");
+
+						//System.out.println(likingValue + " is Greater than Max Liking " + maxLiking);
 						favShirtIndex += 1;
 						top += 1;
 						clothesArray[top] = likingValue;
@@ -72,16 +74,17 @@ public class FabricBreakup
 					}
 					else
 					{	
-						//System.out.println("Lesser than Max Liking");
+						//System.out.println(likingValue + " is Lesser than Max Liking " + maxLiking);
 						top += 1;
 						clothesArray[top] = likingValue;
 					}
 				}
-				else
+				else if(mode==2)
 				{
 					if(top == -1)
 					{
 						System.out.println(id +" "+ -1);
+						//System.out.println("Maxlikig is :" + maxLiking);
 					}
 					else
 					{
@@ -94,22 +97,49 @@ public class FabricBreakup
 						{
 							maxLiking=-1;
 						}
+						else
+						{
+							maxLiking = clothesArray[favArray[favShirtIndex]];
+						}
 						temp = temp1-temp;
 						//System.out.println("Renoving Shirts, taking out the favourite one");
 						//System.out.println("Total of " + temp + " shirts removed.");
 						System.out.println(id + " " + temp);
+						//System.out.println("Maxlikig is :" + maxLiking);
+
 					}
 	
+				}
+				else
+				{
+					System.out.println("Incorrect Value for Mode");
 				}
 				if(i==in-1)
 				{
 					input.close();
 				}
+				//FabricBreakup.printstack();
 			}
-			}
-			catch(FileNotFoundException e)
-			{
-				System.err.println(e.getMessage());
-			}			
 		}
+		catch(FileNotFoundException e)
+		{
+			System.err.println(e.getMessage());
+		}
+		catch(ArrayIndexOutOfBoundsException e)
+		{
+			System.out.println("Please enter a valid file name");
+		}		
+	}
+
+	/*public static void printstack()
+	{
+		System.out.print("[");
+		for(int i=0; i<top+1; i++)
+		{
+			System.out.print(clothesArray[i]+",");
+		}
+		System.out.println("]");
+		System.out.println();
+		System.out.println();
+	}*/
 }
