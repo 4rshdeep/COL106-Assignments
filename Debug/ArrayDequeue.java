@@ -1,4 +1,6 @@
 import java.util.Scanner;
+
+
 public class ArrayDequeue implements DequeInterface 
 {
   /* Using array based deque
@@ -57,7 +59,6 @@ public class ArrayDequeue implements DequeInterface
     int arrLen = arrayDeq.length;
     if((arrLen-size)==1)
     {
-      System.out.println("DOUBLING THE SIZE AND INSERTING AT LAST");
       //Double the array copy and put o at last and decrement size
       int frontIndex = headIndex;
       Object[] temp = new Object[2*arrLen];
@@ -78,10 +79,9 @@ public class ArrayDequeue implements DequeInterface
     }
     else
     {
-      System.out.println("INSERTING AT LAST, WITHOUT DOUBLING THE ARRAY SIZE");
       int N = arrayDeq.length;
       arrayDeq[rearIndex] = o;
-      rearIndex = (rearIndex+1)%N;      
+      rearIndex = (rearIndex+1)%N;
       size += 1;
     }
   }
@@ -115,15 +115,29 @@ public class ArrayDequeue implements DequeInterface
       return arrayDeq[rearIndex];
     }
   }
-  public Object first()
+  public Object first() throws EmptyDequeException
   {
-    return arrayDeq[headIndex];
+    if(size==0)
+    {
+      throw new EmptyDequeException("");
+    }
+    else
+    {
+      return arrayDeq[headIndex];
+    }
   }
   
-  public Object last()
+  public Object last() throws EmptyDequeException
   {
     int last = (rearIndex+arrayDeq.length-1)%arrayDeq.length;
-    return arrayDeq[last];    
+    if(size==0)
+    {
+      throw new EmptyDequeException("");    
+    }
+    else
+    {
+      return arrayDeq[last]; 
+    }
   }
   
   public int size()
@@ -160,12 +174,12 @@ public class ArrayDequeue implements DequeInterface
       }
       if(size==0)
       {
-        str.append("]");
+        str.append("]");  
       }
       return str.toString();
     }
   }
-  
+    
   
   public static void main(String[] args){
     DequeInterface myDeque = new ArrayDequeue();
