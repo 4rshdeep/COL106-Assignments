@@ -28,8 +28,6 @@ public class FabricBreakup
 	
 	public static void main(String args[])
 	{
-		//if(args.length>0)
-		//
 		try
 		{
 			int id;
@@ -40,32 +38,21 @@ public class FabricBreakup
 			File file = new File(args[0]);
 			Scanner input = new Scanner(file);
 			
-			//}
-			//else
-			//{
-			//	Scanner input = new Scanner(System.in);
-			//}
-			//System.out.println("Num of Operations");
 			int in = input.nextInt();
-			//System.out.println("Number of Operations is: " + in);
 			FabricBreakup fb = new FabricBreakup(in+1);
 	
 			for(int i=0; i<in; i++)
 			{
 				id 	 = input.nextInt();
-				//System.out.println("id: " + id);
 				mode = input.nextInt();
-				//System.out.println("mode: "+ mode);
 				//mode 1 to put and mode 2 to party
 				if(mode==1)
 				{
 					//put shirt in stack
 					likingValue = input.nextInt();
-					//System.out.println("Liking Value is " + likingValue);
 					if(likingValue>=maxLiking)
 					{
 
-						//System.out.println(likingValue + " is Greater than Max Liking " + maxLiking);
 						favShirtIndex += 1;
 						top += 1;
 						clothesArray[top] = likingValue;
@@ -74,7 +61,6 @@ public class FabricBreakup
 					}
 					else
 					{	
-						//System.out.println(likingValue + " is Lesser than Max Liking " + maxLiking);
 						top += 1;
 						clothesArray[top] = likingValue;
 					}
@@ -84,7 +70,6 @@ public class FabricBreakup
 					if(top == -1)
 					{
 						System.out.println(id +" "+ -1);
-						//System.out.println("Maxlikig is :" + maxLiking);
 					}
 					else
 					{
@@ -102,11 +87,7 @@ public class FabricBreakup
 							maxLiking = clothesArray[favArray[favShirtIndex]];
 						}
 						temp = temp1-temp;
-						//System.out.println("Renoving Shirts, taking out the favourite one");
-						//System.out.println("Total of " + temp + " shirts removed.");
 						System.out.println(id + " " + temp);
-						//System.out.println("Maxlikig is :" + maxLiking);
-
 					}
 	
 				}
@@ -118,7 +99,6 @@ public class FabricBreakup
 				{
 					input.close();
 				}
-				//FabricBreakup.printstack();
 			}
 		}
 		catch(FileNotFoundException e)
@@ -131,15 +111,4 @@ public class FabricBreakup
 		}		
 	}
 
-	/*public static void printstack()
-	{
-		System.out.print("[");
-		for(int i=0; i<top+1; i++)
-		{
-			System.out.print(clothesArray[i]+",");
-		}
-		System.out.println("]");
-		System.out.println();
-		System.out.println();
-	}*/
 }
