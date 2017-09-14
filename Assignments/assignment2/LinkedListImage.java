@@ -289,8 +289,12 @@ public Node[] arrayOfLists;
                 {
                     temp = rowHead;
                     prevNode = temp;
-                    while((!(temp.val > y))||(temp.val==-1))
+                    while(!(temp.val > y))
                     {
+                        if (temp.val==-1)
+                        {
+                            break;
+                        }
                         prevNode = temp;
                         temp = temp.next;
                     }
@@ -324,8 +328,11 @@ public Node[] arrayOfLists;
                 else if(((getPixelValue(x,y-1)==true) && (getPixelValue(x,y+1)==false)))
                 {
                     // find the right neighbour and decrement it's value
+                    temp = rowHead;
                     while(temp.val!=y+1)
                     {
+                        System.out.println("Temp: "+temp.val);
+                        System.out.println("y+1: " + y+1 );
                         System.out.println(9);
                         temp = temp.next;
                     }
@@ -338,44 +345,119 @@ public Node[] arrayOfLists;
 
     public int[] numberOfBlackPixels()
     {
-		//you need to implement this
-		throw new java.lang.UnsupportedOperationException("Not implemented yet.");
+        int count[] = new int[row];
+		for( int i=0; i<row; i++)
+        {
+            for (int j=0; j<col; j++) 
+            {
+                if(getPixelValue(i,j) == false)
+                {
+                    count[i] += 1;
+                }    
+            }
+        }
+        return count;
     }
     
     public void invert()
     {
-		//you need to implement this
-		throw new java.lang.UnsupportedOperationException("Not implemented yet.");
+		for (int i=0; i<row; i++) 
+        {
+            for (int j=0; j<col; j++) 
+            {
+                setPixelValue(i, j, !(getPixelValue(i,j)));    
+            }
+            
+        }
     }
     
     public void performAnd(CompressedImageInterface img)
     {
-		//you need to implement this
-		throw new java.lang.UnsupportedOperationException("Not implemented yet.");
+		for (int i=0; i<row; i++) 
+        {
+            for (int j=0; j<col; j++) 
+            {
+                if((getPixelValue(i,j)==true) && (((LinkedListImage)img).getPixelValue(i,j)==true))
+                {
+                    setPixelValue(i,j, true);
+                }
+                else 
+                {
+                    setPixelValue(i, j, false);    
+                }
+            }
+            
+        }
     }
     
     // typecast to use methods https://stackoverflow.com/questions/5306835/casting-objects-in-java
     // ((B)a).printFromB()
     public void performOr(CompressedImageInterface img)
     {
-		Node[] img1_arr = arrayOfLists;
-        Node[] img2_arr = ((LinkedListImage)img).arrayOfLists;
-
-
+		for (int i=0; i<row; i++) 
+        {
+            for (int j=0; j<col; j++) 
+            {
+                if((getPixelValue(i,j)==true) || (((LinkedListImage)img).getPixelValue(i,j)==true))
+                {
+                    setPixelValue(i,j, true);
+                }
+                else
+                {
+                    setPixelValue(i, j, false);
+                }
+            }    
+        }
     }
     
     public void performXor(CompressedImageInterface img)
     {
-		//you need to implement this
-		throw new java.lang.UnsupportedOperationException("Not implemented yet.");
+		for (int i=0; i<row; i++) 
+        {
+            for (int j=0; j<col; j++) 
+            {
+                if((getPixelValue(i,j)==true) && (((LinkedListImage)img).getPixelValue(i,j)==false))
+                {
+                    setPixelValue(i,j, true);
+                }  
+                else if(getPixelValue(i,j)==false && ((LinkedListImage)img).getPixelValue(i,j)==true)
+                {
+                    setPixelValue(i,j, true);
+                }
+                else
+                {
+                    setPixelValue(i,j,false);
+                }                    
+            }    
+        }
     }
     
     public String toStringUnCompressed()
     {
-		//you need to implement this
-		throw new java.lang.UnsupportedOperationException("Not implemented yet.");
+        StringBuilder str = new StringBuilder(""+row+" "+ col+",");
+        boolean finished;
+        Node rowHead;
+		for(int i=0; i<row; i++)
+        {
+            finished = false;
+            rowHead = arrayOfLists[i];
+            for (int j=0; j<col; j++) 
+            {
+                if(getPixelValue(i,j)==false)
+                {
+                    str.append("0");
+                }
+                else
+                {
+                    str.append("1");
+                }
+                str.append("\n");
+            }
+        }
+        return str.toString();
     }
     
+
     
     public String toStringCompressed()
     {
@@ -417,6 +499,7 @@ public Node[] arrayOfLists;
         //System.out.println(success);
         //System.out.println("Mine : "+ img1_compressed );
         //System.out.println("Real : "+ img_ans);
+        //System.out.println(img1.toStringUnCompressed());
     	if (!success)
     	{
     		System.out.println("Constructor (file) or toStringCompressed ERROR");
@@ -449,7 +532,7 @@ public Node[] arrayOfLists;
     	}
 
     	// check Xor
-        try
+        /*try
         {
         	img1.performXor(img2);       
         }
@@ -474,7 +557,7 @@ public Node[] arrayOfLists;
     	{
     		System.out.println("performXor or getPixelValue ERROR");
     		return;
-    	}
+    	}*/
 
     	// check setPixelValue
     	for (int i = 0; i < 16; i++)
@@ -498,7 +581,7 @@ public Node[] arrayOfLists;
     	{
     		System.out.println("setPixelValue or numberOfBlackPixels ERROR");
     		return;
-    	}
+    	}*/
 
     	// check invert
         img1.invert();
