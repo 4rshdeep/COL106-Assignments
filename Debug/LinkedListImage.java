@@ -11,6 +11,7 @@ public Node[] arrayOfLists;
     public LinkedListImage(String filename)
     {
     try{
+        // does not put the node if the first column is 0
         File file = new File(filename);
         Scanner input = new Scanner(file);
         String templ = input.nextLine();
@@ -22,7 +23,7 @@ public Node[] arrayOfLists;
 
         int temp=0;
         int prev;
-        
+        Node[] tailPtrs = new Node[row];
         // Insert a -1 first to denote end of the row
         for(int i=0; i<row; i++)
         {
@@ -47,8 +48,9 @@ public Node[] arrayOfLists;
             for (int j=0; j<len; j++) 
             {   // if the jth character is 0
                 if (tempString.substring(j, j+1).equals("0")) {
-                    if(prev==1 || j==len-1) 
-                    {
+                    if(prev==1 || j==len-1 ||j==0)  
+                    {  //We need to insert if we had a one before or
+                       // if it is the first column or the last one
                         Node newNode = new Node(j);
 
                         tempNode = arrayOfLists[i];
@@ -56,17 +58,41 @@ public Node[] arrayOfLists;
                         {
                             newNode.next = arrayOfLists[i];
                             arrayOfLists[i] = newNode;
+                            // update the tailptr
+                            tailPtrs[i] = newNode;
                         }
                         else
                         {
-                            prevNode = tempNode;
-                            while(tempNode.val!=-1)
-                            {
-                                prevNode = tempNode;
-                                tempNode = tempNode.next;
-                            }
-                            prevNode.next = newNode;
-                            newNode.next = tempNode;
+                            newNode.next = tailPtrs[i].next;
+                            tailPtrs[i].next = newNode;
+                            tailPtrs[i] = newNode;
+                            //Insert NewNode at last
+                            //prevNode = tempNode;
+                            //while(tempNode.val!=-1)
+                            //{
+                            //    prevNode = tempNode;
+                            //    tempNode = tempNode.next;
+                            //}
+                            //prevNode.next = newNode;
+                            //newNode.next = tempNode;
+                        }
+                        if(j==len-1 && prev==1)
+                        {
+                            //Insert NewNode at last
+                            newNode = new Node(j);
+                            newNode.next = tailPtrs[i].next;
+                            tailPtrs[i].next = newNode;
+                            tailPtrs[i] = newNode;
+                            
+                            //tempNode = arrayOfLists[i];
+                            //prevNode = tempNode;
+                            //while(tempNode.val!=-1)
+                            //{
+                            //    prevNode = tempNode;
+                            //    tempNode = tempNode.next;
+                            //}
+                            //prevNode.next = newNode;
+                            //newNode.next  = tempNode;
                         }
                     }
                     prev=0;
@@ -75,21 +101,27 @@ public Node[] arrayOfLists;
                     if (prev==0) {
                         Node newNode = new Node(j-1);
                         tempNode = arrayOfLists[i];
-                        if(tempNode.val==-1)
+                        if(tempNode.val==-1)// I dont' think this case ever occurs
                         {
+                            System.out.println("This occurs");
                             newNode.next = arrayOfLists[i];
                             arrayOfLists[i] = newNode;
+                            tailPtrs[i] = newNode;
                         }
                         else
                         {
-                            prevNode = tempNode;
-                            while(tempNode.val!=-1)
-                            {
-                                prevNode = tempNode;
-                                tempNode = tempNode.next;
-                            }
-                            prevNode.next = newNode;
-                            newNode.next = tempNode;
+                            newNode.next = tailPtrs[i].next;
+                            tailPtrs[i].next = newNode;
+                            tailPtrs[i] = newNode;
+                            
+                            //prevNode = tempNode;
+                            //while(tempNode.val!=-1)
+                            //{
+                            //    prevNode = tempNode;
+                            //    tempNode = tempNode.next;
+                            //}
+                            //prevNode.next = newNode;
+                            //newNode.next = tempNode;
                         }
                     }
                     prev=1;
@@ -110,7 +142,7 @@ public Node[] arrayOfLists;
         col = width;
         Node tempNode, prevNode;
         arrayOfLists = new Node[row];
-
+        Node[] tailPtrs = new Node[row];
         for(int i=0; i<row; i++)
         {
             tempNode = new Node(-1);
@@ -123,8 +155,9 @@ public Node[] arrayOfLists;
             {
                 if (grid[i][j] == false) 
                 {
-                    if(prev==1 || j==width-1) 
-                    {
+                    if(prev==1 || j==width-1 ||j==0)  
+                    {  //We need to insert if we had a one before or
+                       // if it is the first column or the last one
                         Node newNode = new Node(j);
 
                         tempNode = arrayOfLists[i];
@@ -132,42 +165,44 @@ public Node[] arrayOfLists;
                         {
                             newNode.next = arrayOfLists[i];
                             arrayOfLists[i] = newNode;
+                            tailPtrs[i] = newNode;
                         }
-                        else 
+                        else
                         {
-                            prevNode = tempNode;
-                            while(tempNode.val!=-1)
-                            {
-                                prevNode = tempNode;
-                                tempNode = tempNode.next;
-                            }
-                            prevNode.next = newNode;
-                            newNode.next = tempNode;
+                            newNode.next = tailPtrs[i].next;
+                            tailPtrs[i].next = newNode;
+                            tailPtrs[i] = newNode;
+                            //Insert NewNode at last
+                            
                         }
-                    
+                        if(j==width-1 && prev==1)
+                        {
+                            //Insert NewNode at last
+                            newNode = new Node(j);
+                            newNode.next = tailPtrs[i].next;
+                            tailPtrs[i].next = newNode;
+                            tailPtrs[i] = newNode;
+                        }
                     }
                     prev=0;
                 }
+
                 else if (grid[i][j]==true) {
-                    if (prev==0) 
-                    {
+                    if (prev==0) {
                         Node newNode = new Node(j-1);
                         tempNode = arrayOfLists[i];
                         if(tempNode.val==-1)
                         {
+                            System.out.println("This occurs");
                             newNode.next = arrayOfLists[i];
                             arrayOfLists[i] = newNode;
+                            tailPtrs[i] = newNode;
                         }
-                        else 
+                        else
                         {
-                            prevNode = tempNode;
-                            while(tempNode.val!=-1)
-                            {
-                                prevNode = tempNode;
-                                tempNode = tempNode.next;
-                            }
-                            prevNode.next = newNode;
-                            newNode.next = tempNode;
+                            newNode.next = tailPtrs[i].next;
+                            tailPtrs[i].next = newNode;
+                            tailPtrs[i] = newNode;
                         }
                     }
                     prev=1;
@@ -193,10 +228,11 @@ public Node[] arrayOfLists;
         while(firstNode.val!=-1)
         {
             secondNode = firstNode.next;
-
+            //System.out.println(y + " " + firstNode.val + " " + secondNode.val);
             if(y >= firstNode.val && y<=secondNode.val)
-            {
-                return false;
+            {   
+                 //System.out.println(false);
+                 return false;
             }
 
             firstNode = secondNode.next;
@@ -216,162 +252,335 @@ public Node[] arrayOfLists;
     {
         try
         {    
-            boolean black = getPixelValue(x, y);
+            boolean isBlack = !getPixelValue(x, y);
+            boolean black = false;
             Node rowHead = arrayOfLists[x];
             Node temp = rowHead;
-            Node prevNode;
-            //if the pixel is black is zero / false
-            if(!black)
+            Node prevNode, tempNode;
+            if(isBlack)
             {
-                // Do i want ot set it black or white 
-                // I have to change only when 
-                // I want to set it as white
-                if(val==true)
+                if(val!=false)
                 {
-                    //lonely black
-                    if((getPixelValue(x,y-1)==true) && (getPixelValue(x,y+1)==true))
+                    // Change a zero(black) to a one(white)
+                   //System.out.println("Okay you want to make it one");
+
+                    // has one neighbour 
+                    if((y==0)||(y==row-1))
                     {
-                        //occurs at the start then update the head
-                        if(rowHead.val == y)
+                        //System.out.println("You have one neighbour");
+                        //alone at start
+                        if(y==0 && getPixelValue(x,y+1)==true)
                         {
-                            arrayOfLists[x] = rowHead.next.next;
+                            temp = arrayOfLists[x];
+                            arrayOfLists[x] = temp.next.next;
                         }
-                        else
-                        {   
-        
-                            prevNode = temp;
-                            while(temp.val!=y)
+                        // has a black neighbour
+                        if(y==0 && getPixelValue(x,y+1)==false)
+                        {
+                            arrayOfLists[x].val = y+1;
+                        }
+                        // alone in the end
+                        if(y==row-1 && getPixelValue(x,y-1)==true)
+                        {
+                            temp = rowHead;
+                            //if occurs at first
+                            if(temp.val==y)
                             {
+                                arrayOfLists[x] = new Node(-1);
+                            }
+                            if(temp.val!=y)
+                            {
+                                //System.out.println(toStringCompressed());
+                                prevNode = rowHead;
+                                tempNode = rowHead;
+                                while(tempNode.val!=y)
+                                {
+                                    prevNode = tempNode;
+                                    tempNode = tempNode.next;
+                                }
+                                prevNode.next = new Node(-1);
+                                //System.out.println(toStringCompressed());
+                                
+                            }
+
+                        }
+                        // has a black predecessor
+                        if(y==row-1 && getPixelValue(x,y-1)==false)
+                        {
+                            tempNode = rowHead;
+                            while(tempNode.val!=y)
+                            {
+                                tempNode = tempNode.next;
+                            }
+                            tempNode.val -= 1;
+                        }
+                    }
+                    else // has two neighbours
+                    {
+                        //lonely black
+                        if((getPixelValue(x,y-1)==true) && (getPixelValue(x,y+1)==true))
+                        {
+                            //occurs at the start then update the head
+                            if(rowHead.val == y)
+                            {
+                                arrayOfLists[x] = rowHead.next.next;
+                            }
+                            else
+                            {   
+            
                                 prevNode = temp;
-                                temp = temp.next;
+                                while(temp.val!=y)
+                                {
+                                    prevNode = temp;
+                                    temp = temp.next;
+                                }
+                                prevNode.next = temp.next.next;
                             }
-                            prevNode.next = temp.next.next;
                         }
-                    }
-                    // corner black in a group of blacks
-                    if((getPixelValue(x,y-1) == true && getPixelValue(x,y+1) == false) || (getPixelValue(x,y-1) == false && getPixelValue(x,y+1) == true))
-                    {
-                        //first occuring
-                        if((getPixelValue(x,y-1)==true) && (getPixelValue(x,y+1)==false))
+                        // corner black in a group of blacks
+                        if((getPixelValue(x,y-1) == true && getPixelValue(x,y+1) == false) || (getPixelValue(x,y-1) == false && getPixelValue(x,y+1) == true))
                         {
-                            //Get to the node 
-                            while(temp.val!=y)
+                            //first occuring
+                            if((getPixelValue(x,y-1)==true) && (getPixelValue(x,y+1)==false))
                             {
-                                System.out.println(2);
-                                temp = temp.next;
+                                //Get to the node 
+                                while(temp.val!=y)
+                                {
+                                    //System.out.println(2);
+                                    temp = temp.next;
+                                }
+                                // Change the value in the node
+                                temp.val = y+1;
                             }
-                            // Change the value in the node
-                            temp.val = y+1;
+                            else
+                            {
+                                while(temp.val!=y)
+                                {
+                                    temp = temp.next;
+                                }
+                                temp.val = y-1;
+                            }
                         }
-                        else
+
+                        //middle black
+                        if((getPixelValue(x,y-1)==false) && (getPixelValue(x,y+1)==false))
                         {
-                            while(temp.val!=y)
+                            Node firstNode, secondNode;
+                            firstNode = rowHead;
+                            secondNode = firstNode.next;
+                            boolean found = false;
+                            while(!found)
                             {
-                                temp = temp.next;
+                                if(y >= firstNode.val && y<=secondNode.val)
+                                {
+                                    //put y-1 y+1 nodes in between
+                                    Node afterFirst = new Node(y-1);
+                                    Node beforeSecond = new Node(y+1);
+                                    firstNode.next = afterFirst;
+                                    afterFirst.next = beforeSecond;
+                                    beforeSecond.next = secondNode;
+                                    found = true;
+                                }
+                                else // traverse until you find
+                                {
+                                    firstNode = secondNode.next;    
+                                    secondNode = secondNode.next.next;                
+                                }
                             }
-                            temp.val = y-1;
-                        }
-                    }
-        
-                    //middle black
-                    if((getPixelValue(x,y-1)==false) && (getPixelValue(x,y+1)==false))
-                    {
-                        Node firstNode, secondNode;
-                        firstNode = rowHead;
-                        secondNode = firstNode.next;
-                        boolean found = false;
-                        while(!found)
-                        {
-                            if(y >= firstNode.val && y<=secondNode.val)
-                            {
-                                //put y-1 y+1 nodes in between
-                                Node afterFirst = new Node(y-1);
-                                Node beforeSecond = new Node(y+1);
-                                firstNode.next = afterFirst;
-                                afterFirst.next = beforeSecond;
-                                beforeSecond.next = secondNode;
-                                found = true;
-                            }
-                            else // traverse until you find
-                            {
-                                firstNode = secondNode.next;    
-                                secondNode = secondNode.next.next;                
-                            }
-                        }
+                        }        
                     }
                 }
             }
-            // otherwise it would be white
-            else 
+            else
             {
-                if(val==false)
+                if(val!=true)
                 {
-                    // No surrounding black
-                    if((getPixelValue(x,y-1)==true) && (getPixelValue(x,y+1)==true))
+                    //System.out.println("So yo want to make it zero");
+                    // has one neighbour 
+                    if((y==0)||(y==row-1))
                     {
-                        // check for the next node value
-                        if(rowHead.val > y)
+                        //System.out.println("You have one neighbour");
+                        if(y==0)
                         {
-                            //create two nodes for the y and insert this would work since there are no surrounding blacks
-                            Node firstNode = new Node(y);
-                            Node secondNode = new Node(y);
-                            secondNode.next = arrayOfLists[x];
-                            firstNode.next = secondNode;
-                            arrayOfLists[x] = firstNode;
-                        }
-                        else
-                        {
-                            temp = rowHead;
-                            prevNode = temp;
-                            while((temp.val < y)&&(temp.val!=-1))
+                            if(getPixelValue(x, y+1)==true)
                             {
-                                prevNode = temp;
-                                temp = temp.next;
+                                Node firstNode  = new Node(y);
+                                Node secondNode = new Node(y);
+                                firstNode.next  = secondNode;
+                                secondNode.next = arrayOfLists[x];
+                                arrayOfLists[x] = firstNode;
                             }
-                            // put two nodes after prevNode and before temp
-                            Node firstNode = new Node(y);
-                            Node secondNode = new Node(y);
-        
-                            prevNode.next = firstNode;
-                            firstNode.next = secondNode;
-                            secondNode.next = temp;
+                            else if(getPixelValue(x, y+1)==false)
+                            {
+                                arrayOfLists[x].val = y;
+                            }
                         }
-        
+                        else if(y==row-1)
+                        {
+                            if(getPixelValue(x, y-1)==false)
+                            {
+                                temp = rowHead;
+                                while(temp.val!=y-1)
+                                {
+                                    temp = temp.next;
+                                }
+                                // In case out of the pair if there is only a single dot then the first value will change therefore we need to change the second occurence in case it is same.
+                                if (temp.val == temp.next.val) 
+                                {
+                                    temp.next.val = y;   
+                                }
+                                else
+                                {
+                                    temp.val = y;
+                                }
+                                
+                            }
+                            // BUG changing the last node from 1 to zero when the second last is 0
+                            if(getPixelValue(x, y-1)==true)
+                            {
+                                if(rowHead.val==-1)
+                                {
+                                    Node firstNode = new Node(y);
+                                    Node secondNode = new Node(y);
+                                    firstNode.next = secondNode;
+                                    secondNode.next = arrayOfLists[x];
+                                    arrayOfLists[x] = firstNode;
+                                }
+                                else
+                                {
+                                    prevNode = rowHead;
+                                    tempNode = rowHead;
+                                    while(tempNode.val!=-1)
+                                    {
+                                        prevNode = tempNode;
+                                        tempNode = tempNode.next;
+                                    }
+                                    Node firstNode = new Node(y);
+                                    Node secondNode = new Node(y);
+                                    firstNode.next = secondNode;
+                                    secondNode.next = tempNode;
+                                    prevNode.next = firstNode;
+                                }
+                            }
+                        }
                     }
-        
-                    ///FALSE => 0 => Black
-        
-                    // One neighbour is black 
-                    else if( ((getPixelValue(x,y-1)==false) && (getPixelValue(x,y+1)==true))|| ((getPixelValue(x,y-1)==true) && (getPixelValue(x,y+1)==false)))
+                    else // has two neighbours
                     {
-                        //if the left neighbour is black then increment the value in the left neighbour
-                        if(((getPixelValue(x,y-1)==false) && (getPixelValue(x,y+1)==true)))
+                        // No surrounding black
+                        if((getPixelValue(x,y-1)==true) && (getPixelValue(x,y+1)==true))
                         {
-                            while(temp.val!=y-1)
+                            // check for the next node value
+                            if(rowHead.val > y)
                             {
-                                System.out.println(8);
-                                temp = temp.next;
+                                //create two nodes for the y and insert this would work since there are no surrounding blacks
+                                Node firstNode = new Node(y);
+                                Node secondNode = new Node(y);
+                                secondNode.next = arrayOfLists[x];
+                                firstNode.next = secondNode;
+                                arrayOfLists[x] = firstNode;
                             }
-                            temp.val = y+1;
+                            else if(rowHead.val==-1)
+                            {
+                                Node firstNode = new Node(y);
+                                Node secondNode = new Node(y);
+                                firstNode.next = secondNode;
+                                secondNode.next = rowHead;
+                                arrayOfLists[x] = firstNode;
+                            }
+                            else if(rowHead.val!=-1)
+                            {
+                                temp = rowHead;
+                                prevNode = temp;
+                                while((temp.val < y)&&(temp.val!=-1))
+                                {
+                                    prevNode = temp;
+                                    temp = temp.next;
+                                }
+                                // put two nodes after prevNode and before temp
+                                Node firstNode = new Node(y);
+                                Node secondNode = new Node(y);
+            
+                                prevNode.next = firstNode;
+                                firstNode.next = secondNode;
+                                secondNode.next = temp;
+                            }
+            
                         }
-                        // otherwise right neighbour is black
-                        else if(((getPixelValue(x,y-1)==true) && (getPixelValue(x,y+1)==false)))
+                        //If both neighbours are black
+
+
+                        // If only one neighbour is black 
+                        else if( ((getPixelValue(x,y-1)==false) && (getPixelValue(x,y+1)==true))|| ((getPixelValue(x,y-1)==true) && (getPixelValue(x,y+1)==false)))
                         {
-                            // find the right neighbour and decrement it's value
-                            temp = rowHead;
-                            while(temp.val!=y+1)
+                            //if the left neighbour is black then increment the value in the left neighbour
+                            // make 011 -> 001
+                            if(((getPixelValue(x,y-1)==false) && (getPixelValue(x,y+1)==true)))
                             {
-                                System.out.println("Temp: "+temp.val);
-                                System.out.println("y+1: " + y+1 );
-                                System.out.println(9);
-                                temp = temp.next;
+                                String str = toStringCompressed();
+                                while(temp.val!=y-1)
+                                {
+                                    ////System.out.println(8);
+                                    temp = temp.next;
+                                }
+                                //System.out.println(temp.val + " " + y);
+                                // Now if there is single zero temp points to the first one
+                                // otherwise it pounts to the right one
+   // Thing is we would want to update the value where we have y = y-1 and we want to increment that to y since in case of unequal pair (note that every group of zero forms a pair) we have only single occurence of y so we need not check for the later value where y occurs but that is not the case with single zero since we have to take the later value we have to make an additional check on that
+                                if(temp.val == temp.next.val)
+                                {
+                                    temp.next.val = y;
+                                }
+                                else
+                                {
+                                    temp.val = y;    
+                                }
+                                //System.out.println(temp.val + " " + y);
+                                
                             }
-                            temp.val = y-1;
+                            // otherwise right neighbour is black
+                            else if(((getPixelValue(x,y-1)==true) && (getPixelValue(x,y+1)==false)))
+                            {
+                                // find the right neighbour and decrement it's value
+                                temp = rowHead;
+                                while(temp.val!=y+1)
+                                {
+                                    //System.out.println("Temp: "+temp.val);
+                                    //System.out.println("y+1: " + y+1 );
+                                    //System.out.println(9);
+                                    temp = temp.next;
+                                }
+                                // Since in any case whether there is only single 0 we donot need to make case since in any case we would want to update the first value i.e the smaller one
+                                temp.val = y;
+                            }
                         }
+
+                        // Between two blacks
+                        else if((getPixelValue(x,y-1)==false) && (getPixelValue(x,y+1)==false))
+                        {
+                            Node fptr = rowHead.next;
+                            Node tptr = rowHead;
+                            Node sptr = rowHead.next.next;
+                            boolean found = false;
+                            while(!found)
+                            {
+                                if((fptr.val<y)&&(sptr.val>y))
+                                {
+                                    tptr.next = sptr.next;
+                                    found = true;
+                                }
+                                else
+                                {
+                                    tptr = sptr;
+                                    fptr = sptr.next;
+                                    sptr = fptr.next;
+                                }
+                            } 
+                        }
+
+                            //System.out.println("2 neighbours");
                     }
                 }
-            }  
-    
+            }
         }
         catch (PixelOutOfBoundException e) 
         {
@@ -502,11 +711,11 @@ public Node[] arrayOfLists;
     
     public String toStringUnCompressed()
     {
-        StringBuilder str = new StringBuilder(""+row+" "+ col+",");
-        
+        StringBuilder str = new StringBuilder(""+row+" "+ col+", ");
+        // Identified Bug when the first column contains zero in 
+        // some row.
     try
     {
-        str.append("\n");
         boolean finished;
         Node rowHead;
         for(int i=0; i<row; i++)
@@ -523,9 +732,18 @@ public Node[] arrayOfLists;
                 {
                     str.append("1");
                 }
-                
+                if (j==col-1 && i!=row-1) 
+                {
+                    str.append(", ");    
+                }
+                else if((i!=row-1) || (j!=col-1))
+                {    
+                    str.append(" ");
+                }    
+                           
             }
-            str.append("\n");
+            
+            
         }
         
     }
@@ -564,67 +782,188 @@ public Node[] arrayOfLists;
         }
         return str.toString();    
     }
+
     public static void main(String[] args) {
-    CompressedImageInterface img1 = new LinkedListImage("sampleInputFile.txt");
-    int quit = 0;
-    int in = -1;
-    int x, y,z = 0;
-    Scanner input = new Scanner(System.in);
-    try
-    {System.out.println(img1.toStringUnCompressed());
-    while(quit != -1)
-    {
-        
-        System.out.println("1 for getpixel, 2 for setpixel");
-        in = input.nextInt();
-        switch(in)
+        // testing all methods here :
+        boolean success = true;
+
+        // check constructor from file
+        CompressedImageInterface img1 = new LinkedListImage("sampleInputFile.txt");
+        // check toStringCompressed
+        String img1_compressed = img1.toStringCompressed();
+        String img_ans = "16 16, -1, 5 7 -1, 3 7 -1, 2 7 -1, 2 2 6 7 -1, 6 7 -1, 6 7 -1, 4 6 -1, 2 4 -1, 2 3 14 15 -1, 2 2 13 15 -1, 11 13 -1, 11 12 -1, 10 11 -1, 9 10 -1, 7 9 -1";
+        success = success && (img_ans.equals(img1_compressed));
+        //System.out.println(success);
+        System.out.println("Mine : "+ img1_compressed );
+        System.out.println("Real : "+ img_ans);
+        //System.out.println(img1.toStringUnCompressed());
+        if (!success)
         {
-            case 1:
-            System.out.println(img1.toStringUnCompressed());
-            System.out.print("Enter row value: ");
-            x = input.nextInt();
-            System.out.print("Enter column value: ");
-            y = input.nextInt();
-            if(img1.getPixelValue(x,y)==true){System.out.println("ONE");}
-            else System.out.println("ZERO");
-
-            System.out.println();
-            break;
-
-            case 2:
-            System.out.println(img1.toStringUnCompressed());
-            System.out.println("Enter row number: ");
-            x = input.nextInt();
-            System.out.println("Enter column number");
-            y = input.nextInt();
-            System.out.println("What value you want to set to 0/1");
-            z = input.nextInt();
-            if(z==0)
-            {
-                img1.setPixelValue(x, y, false);
-            }
-            else if(z==1)
-            {
-                img1.setPixelValue(x, y, true);
-
-            }
-            else
-            {
-                System.out.println("Invalid choice");
-            }
-            System.out.println(img1.toStringUnCompressed());
-            
-            break;  
+            System.out.println("Constructor (file) or toStringCompressed ERROR");
+            return;
         }
 
-    }
-    }
-    catch (PixelOutOfBoundException e) 
-    {
-     System.out.println("this");   
-    }
-}
+        // check getPixelValue
+        boolean[][] grid = new boolean[16][16];
+        for (int i = 0; i < 16; i++)
+            for (int j = 0; j < 16; j++)
+            {
+                try
+                {
+                    grid[i][j] = img1.getPixelValue(i, j);                
+                }
+                catch (PixelOutOfBoundException e)
+                {
+                    System.out.println("Errorrrrrrrr");
+                }
+            }
 
+        // check constructor from grid
+        CompressedImageInterface img2 = new LinkedListImage(grid, 16, 16);
+        String img2_compressed = img2.toStringCompressed();
+        success = success && (img2_compressed.equals(img_ans));
+        if (!success)
+        {
+            System.out.println("Constructor (array) or toStringCompressed ERROR");
+            return;
+        }
+
+        // check Xor
+        try
+        {
+            img1.performXor(img2);       
+        }
+        catch (BoundsMismatchException e)
+        {
+            System.out.println("Errorrrrrrrr");
+        }
+        for (int i = 0; i < 16; i++)
+            for (int j = 0; j < 16; j++)
+            {
+                try
+                {
+                    success = success && (!img1.getPixelValue(i,j));                
+                }
+                catch (PixelOutOfBoundException e)
+                {
+                    System.out.println("Errorrrrrrrr");
+                }
+            }
+
+        if (!success)
+        {
+            System.out.println("performXor or getPixelValue ERROR");
+            return;
+        }
+
+        // check setPixelValue
+        for (int i = 0; i < 16; i++)
+        {
+            try
+            {
+                img1.setPixelValue(i, 0, true);            
+            }
+            catch (PixelOutOfBoundException e)
+            {
+                System.out.println("Errorrrrrrrr");
+            }
+        }
+
+        // check numberOfBlackPixels
+        int[] img1_black = img1.numberOfBlackPixels();
+        success = success && (img1_black.length == 16);
+        for (int i = 0; i < 16 && success; i++)
+            success = success && (img1_black[i] == 15);
+        if (!success)
+        {
+            System.out.println("setPixelValue or numberOfBlackPixels ERROR");
+            return;
+        }
+
+        // check invert
+        img1.invert();
+        for (int i = 0; i < 16; i++)
+        {
+            try
+            {
+                success = success && !(img1.getPixelValue(i, 0));            
+            }
+            catch (PixelOutOfBoundException e)
+            {
+                System.out.println("Errorrrrrrrr");
+            }
+        }
+        if (!success)
+        {
+            System.out.println("invert or getPixelValue ERROR");
+            return;
+        }
+
+        // check Or
+        try
+        {
+            img1.performOr(img2);        
+        }
+        catch (BoundsMismatchException e)
+        {
+            System.out.println("Errorrrrrrrr");
+        }
+        for (int i = 0; i < 16; i++)
+            for (int j = 0; j < 16; j++)
+            {
+                try
+                {
+                    success = success && img1.getPixelValue(i,j);
+                }
+                catch (PixelOutOfBoundException e)
+                {
+                    System.out.println("Errorrrrrrrr");
+                }
+            }
+        if (!success)
+        {
+            System.out.println("performOr or getPixelValue ERROR");
+            return;
+        }
+
+        // check And
+        try
+        {
+            img1.performAnd(img2);    
+        }
+        catch (BoundsMismatchException e)
+        {
+            System.out.println("Errorrrrrrrr");
+        }
+        for (int i = 0; i < 16; i++)
+            for (int j = 0; j < 16; j++)
+            {
+                try
+                {
+                    success = success && (img1.getPixelValue(i,j) == img2.getPixelValue(i,j));             
+                }
+                catch (PixelOutOfBoundException e)
+                {
+                    System.out.println("Errorrrrrrrr");
+                }
+            }
+        if (!success)
+        {
+            System.out.println("performAnd or getPixelValue ERROR");
+            return;
+        }
+
+        // check toStringUnCompressed
+        String img_ans_uncomp = "16 16, 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1, 1 1 1 1 1 0 0 0 1 1 1 1 1 1 1 1, 1 1 1 0 0 0 0 0 1 1 1 1 1 1 1 1, 1 1 0 0 0 0 0 0 1 1 1 1 1 1 1 1, 1 1 0 1 1 1 0 0 1 1 1 1 1 1 1 1, 1 1 1 1 1 1 0 0 1 1 1 1 1 1 1 1, 1 1 1 1 1 1 0 0 1 1 1 1 1 1 1 1, 1 1 1 1 0 0 0 1 1 1 1 1 1 1 1 1, 1 1 0 0 0 1 1 1 1 1 1 1 1 1 1 1, 1 1 0 0 1 1 1 1 1 1 1 1 1 1 0 0, 1 1 0 1 1 1 1 1 1 1 1 1 1 0 0 0, 1 1 1 1 1 1 1 1 1 1 1 0 0 0 1 1, 1 1 1 1 1 1 1 1 1 1 1 0 0 1 1 1, 1 1 1 1 1 1 1 1 1 1 0 0 1 1 1 1, 1 1 1 1 1 1 1 1 1 0 0 1 1 1 1 1, 1 1 1 1 1 1 1 0 0 0 1 1 1 1 1 1";
+        success = success && (img1.toStringUnCompressed().equals(img_ans_uncomp)) && (img2.toStringUnCompressed().equals(img_ans_uncomp));
+        if (!success)
+        {
+            System.out.println("toStringUnCompressed ERROR");
+            return;
+        }
+        else
+            System.out.println("ALL TESTS SUCCESSFUL! YAYY!");
+    }
 }
 
 
