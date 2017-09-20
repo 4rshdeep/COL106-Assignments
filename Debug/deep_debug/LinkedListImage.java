@@ -35,6 +35,7 @@ public Node[] arrayOfLists;
 
         // System.out.println("Next Line  " + tempString);
         Node tempNode, prevNode;
+        Node tailPtr;
         for(int i=0;  i<row; i++)
         {
             //stack st = new stack(row+col);
@@ -61,6 +62,7 @@ public Node[] arrayOfLists;
                         }
                         else
                         {
+                            //Insert NewNode at last
                             prevNode = tempNode;
                             while(tempNode.val!=-1)
                             {
@@ -72,6 +74,7 @@ public Node[] arrayOfLists;
                         }
                         if(j==len-1 && prev==1)
                         {
+                            //Insert NewNode at last
                             newNode = new Node(j);
                             tempNode = arrayOfLists[i];
                             prevNode = tempNode;
@@ -242,7 +245,7 @@ public Node[] arrayOfLists;
                 if(val!=false)
                 {
                     // Change a zero(black) to a one(white)
-                    System.out.println("Okay you want to make it one");
+                   // System.out.println("Okay you want to make it one");
 
                     // has one neighbour 
                     if((y==0)||(y==row-1))
@@ -285,7 +288,7 @@ public Node[] arrayOfLists;
 
                         }
                         // has a black predecessor
-                        if(y==row-1 && getPixelValue(x,y-1)==false)
+                     -   if(y==row-1 && getPixelValue(x,y-1)==false)
                         {
                             tempNode = rowHead;
                             while(tempNode.val!=y)
@@ -375,11 +378,11 @@ public Node[] arrayOfLists;
             {
                 if(val!=true)
                 {
-                    System.out.println("So yo want to make it zero");
+                   // System.out.println("So yo want to make it zero");
                     // has one neighbour 
                     if((y==0)||(y==row-1))
                     {
-                        System.out.println("You have one neighbour");
+                     //   System.out.println("You have one neighbour");
                         if(y==0)
                         {
                             if(getPixelValue(x, y+1)==true)
@@ -557,7 +560,7 @@ public Node[] arrayOfLists;
                             } 
                         }
 
-                            System.out.println("2 neighbours");
+                            //System.out.println("2 neighbours");
                     }
                 }
             }
@@ -769,12 +772,12 @@ public Node[] arrayOfLists;
     while(quit != -1)
     {
         
-        //System.out.println("1 for getpixel, 2 for setpixel");
-        //in = input.nextInt();
-        //switch(in)
-        //{
-            //case 1:
-   /*         System.out.println(img1.toStringUnCompressed());
+        System.out.println("1 for getpixel, 2 for setpixel , 3 to invert");
+        in = input.nextInt();
+        switch(in)
+        {
+            case 1:
+            System.out.println(img1.toStringUnCompressed());
             System.out.print("Enter row value: ");
             x = input.nextInt();
             System.out.print("Enter column value: ");
@@ -783,9 +786,9 @@ public Node[] arrayOfLists;
             else System.out.println("ZERO");
 
             System.out.println();
-            //break;
-*/
-            //case 2:
+            break;
+
+            case 2:
             String str = img1.toStringUnCompressed();
             System.out.println("Enter row number: ");
             x = input.nextInt();
@@ -809,11 +812,15 @@ public Node[] arrayOfLists;
             System.out.println("Before: \n" + str);
             System.out.println("After: \n"+img1.toStringUnCompressed());
             
-            //break;  
-        //
+            break;
+            case 3:
+            img1.invert();
+            System.out.println(img1.toStringUnCompressed());
+        
 
     }
     }
+    }   
     catch (PixelOutOfBoundException e) 
     {
      System.out.println("this");   

@@ -6,7 +6,8 @@ public class LinkedListImage implements CompressedImageInterface {
 
 public int row;
 public int col;
-public Node[] arrayOfLists; 
+public Node[] arrayOfLists;
+public bool invert = false;
 
     public LinkedListImage(String filename)
     {
@@ -66,15 +67,6 @@ public Node[] arrayOfLists;
                             newNode.next = tailPtrs[i].next;
                             tailPtrs[i].next = newNode;
                             tailPtrs[i] = newNode;
-                            //Insert NewNode at last
-                            //prevNode = tempNode;
-                            //while(tempNode.val!=-1)
-                            //{
-                            //    prevNode = tempNode;
-                            //    tempNode = tempNode.next;
-                            //}
-                            //prevNode.next = newNode;
-                            //newNode.next = tempNode;
                         }
                         if(j==len-1 && prev==1)
                         {
@@ -83,16 +75,6 @@ public Node[] arrayOfLists;
                             newNode.next = tailPtrs[i].next;
                             tailPtrs[i].next = newNode;
                             tailPtrs[i] = newNode;
-                            
-                            //tempNode = arrayOfLists[i];
-                            //prevNode = tempNode;
-                            //while(tempNode.val!=-1)
-                            //{
-                            //    prevNode = tempNode;
-                            //    tempNode = tempNode.next;
-                            //}
-                            //prevNode.next = newNode;
-                            //newNode.next  = tempNode;
                         }
                     }
                     prev=0;
@@ -101,7 +83,7 @@ public Node[] arrayOfLists;
                     if (prev==0) {
                         Node newNode = new Node(j-1);
                         tempNode = arrayOfLists[i];
-                        if(tempNode.val==-1)// I dont' think this case ever occurs
+                        if(tempNode.val==-1)
                         {
                             System.out.println("This occurs");
                             newNode.next = arrayOfLists[i];
@@ -113,15 +95,6 @@ public Node[] arrayOfLists;
                             newNode.next = tailPtrs[i].next;
                             tailPtrs[i].next = newNode;
                             tailPtrs[i] = newNode;
-                            
-                            //prevNode = tempNode;
-                            //while(tempNode.val!=-1)
-                            //{
-                            //    prevNode = tempNode;
-                            //    tempNode = tempNode.next;
-                            //}
-                            //prevNode.next = newNode;
-                            //newNode.next = tempNode;
                         }
                     }
                     prev=1;
@@ -193,7 +166,7 @@ public Node[] arrayOfLists;
                         tempNode = arrayOfLists[i];
                         if(tempNode.val==-1)
                         {
-                            System.out.println("This occurs");
+                            //System.out.println("This occurs");
                             newNode.next = arrayOfLists[i];
                             arrayOfLists[i] = newNode;
                             tailPtrs[i] = newNode;
@@ -210,6 +183,7 @@ public Node[] arrayOfLists;
             }
         }
     }
+
 
     public boolean getPixelValue(int x, int y) throws PixelOutOfBoundException
     {
@@ -248,8 +222,11 @@ public Node[] arrayOfLists;
         return true;
     }
 
-   public void setPixelValue(int x, int y, boolean val)
+   public void setPixelValue(int x, int y, boolean val) throws PixelOutOfBoundException
     {
+        if (x > row-1 || y > col-1) {
+            throw new PixelOutOfBoundException("");
+        }
         try
         {    
             boolean isBlack = !getPixelValue(x, y);
@@ -629,10 +606,25 @@ public Node[] arrayOfLists;
         System.out.println("PixelOutOfBoundException");
     }
     }
-    
-    public void performAnd(CompressedImageInterface img)
-    {
 
+    public int getCol()
+    {
+        return col;
+    }
+
+    public int getRow()
+    {
+        return row;
+    }
+    
+    public void performAnd(CompressedImageInterface img) throws BoundsMismatchException
+    {
+        int rowImg = ((LinkedListImage)img).row;
+        int colImg = ((LinkedListImage)img).col;
+        if(row!=rowImg || col!=colImg)
+        {   
+            throw new BoundsMismatchException("");          
+        }
     try
     {
         for (int i=0; i<row; i++) 
@@ -658,8 +650,14 @@ public Node[] arrayOfLists;
     
     // typecast to use methods https://stackoverflow.com/questions/5306835/casting-objects-in-java
     // ((B)a).printFromB()
-    public void performOr(CompressedImageInterface img)
+    public void performOr(CompressedImageInterface img) throws BoundsMismatchException
     {
+        int rowImg = ((LinkedListImage)img).row;
+        int colImg = ((LinkedListImage)img).col;
+        if(row!=rowImg || col!=colImg)
+        {   
+            throw new BoundsMismatchException("");          
+        }
     try{
         for (int i=0; i<row; i++) 
         {
@@ -681,8 +679,14 @@ public Node[] arrayOfLists;
     }
     }
     
-    public void performXor(CompressedImageInterface img)
+    public void performXor(CompressedImageInterface img) throws BoundsMismatchException
     {
+        int rowImg = ((LinkedListImage)img).row;
+        int colImg = ((LinkedListImage)img).col;
+        if(row!=rowImg || col!=colImg)
+        {   
+            throw new BoundsMismatchException("");          
+        }
     try
     {
         for (int i=0; i<row; i++) 
@@ -708,10 +712,10 @@ public Node[] arrayOfLists;
         System.out.println("PixelOutOfBoundException");
     }
     }
-    
+     
     public String toStringUnCompressed()
     {
-        StringBuilder str = new StringBuilder(""+row+" "+ col+", ");
+        StringBuilder str = new StringBuilder(""+row+" "+ col+", \n");
         // Identified Bug when the first column contains zero in 
         // some row.
     try
@@ -742,6 +746,7 @@ public Node[] arrayOfLists;
                 }    
                            
             }
+            str.append('\n');   
             
             
         }
@@ -760,6 +765,8 @@ public Node[] arrayOfLists;
         StringBuilder str = new StringBuilder(""+row+" "+col+",");
 
         int val = 0;
+        str.append("\n");
+        
         for (int i=0; i<row; i++) {
             Node temp = arrayOfLists[i];
             val = 0;
@@ -771,7 +778,7 @@ public Node[] arrayOfLists;
                     val = -1;
                     if(i!=row-1)
                     {
-                        str.append(",");
+                        str.append(", ");
                     }
                 }
                 else{
@@ -779,191 +786,82 @@ public Node[] arrayOfLists;
                 }
                 
             }
+            str.append("\n");
+        
         }
         return str.toString();    
     }
 
-    public static void main(String[] args) {
-        // testing all methods here :
-        boolean success = true;
+public static void main(String[] args) {
+    CompressedImageInterface img1 = new LinkedListImage("sampleInputFile.txt");
+    int quit = 0;
+    int in = -1;
+    int x, y,z = 0;
+    Scanner input = new Scanner(System.in);
 
-        // check constructor from file
-        CompressedImageInterface img1 = new LinkedListImage("sampleInputFile.txt");
-        // check toStringCompressed
-        String img1_compressed = img1.toStringCompressed();
-        String img_ans = "16 16, -1, 5 7 -1, 3 7 -1, 2 7 -1, 2 2 6 7 -1, 6 7 -1, 6 7 -1, 4 6 -1, 2 4 -1, 2 3 14 15 -1, 2 2 13 15 -1, 11 13 -1, 11 12 -1, 10 11 -1, 9 10 -1, 7 9 -1";
-        success = success && (img_ans.equals(img1_compressed));
-        //System.out.println(success);
-        System.out.println("Mine : "+ img1_compressed );
-        System.out.println("Real : "+ img_ans);
-        //System.out.println(img1.toStringUnCompressed());
-        if (!success)
+    try
+    {
+        //System.out.println(img1.toStringCompressed());
+        System.out.println(img1.toStringUnCompressed());
+
+    while(quit != -1)
+    {
+        
+        System.out.println("1 for getpixel, 2 for setpixel , 3 to invert");
+        in = input.nextInt();
+        switch(in)
         {
-            System.out.println("Constructor (file) or toStringCompressed ERROR");
-            return;
-        }
+            case 1:
+            System.out.println(img1.toStringUnCompressed());
+            System.out.print("Enter row value: ");
+            x = input.nextInt();
+            System.out.print("Enter column value: ");
+            y = input.nextInt();
+            if(img1.getPixelValue(x,y)==true){System.out.println("ONE");}
+            else System.out.println("ZERO");
 
-        // check getPixelValue
-        boolean[][] grid = new boolean[16][16];
-        for (int i = 0; i < 16; i++)
-            for (int j = 0; j < 16; j++)
+            System.out.println();
+            break;
+
+            case 2:
+            String str = img1.toStringUnCompressed();
+            System.out.println("Enter row number: ");
+            x = input.nextInt();
+            System.out.println("Enter column number");
+            y = input.nextInt();
+            System.out.println("What value you want to set to 0/1");
+            z = input.nextInt();
+            if(z==0)
             {
-                try
-                {
-                    grid[i][j] = img1.getPixelValue(i, j);                
-                }
-                catch (PixelOutOfBoundException e)
-                {
-                    System.out.println("Errorrrrrrrr");
-                }
+                img1.setPixelValue(x, y, false);
             }
-
-        // check constructor from grid
-        CompressedImageInterface img2 = new LinkedListImage(grid, 16, 16);
-        String img2_compressed = img2.toStringCompressed();
-        success = success && (img2_compressed.equals(img_ans));
-        if (!success)
-        {
-            System.out.println("Constructor (array) or toStringCompressed ERROR");
-            return;
-        }
-
-        // check Xor
-        try
-        {
-            img1.performXor(img2);       
-        }
-        catch (BoundsMismatchException e)
-        {
-            System.out.println("Errorrrrrrrr");
-        }
-        for (int i = 0; i < 16; i++)
-            for (int j = 0; j < 16; j++)
+            else if(z==1)
             {
-                try
-                {
-                    success = success && (!img1.getPixelValue(i,j));                
-                }
-                catch (PixelOutOfBoundException e)
-                {
-                    System.out.println("Errorrrrrrrr");
-                }
+                img1.setPixelValue(x, y, true);
+
             }
-
-        if (!success)
-        {
-            System.out.println("performXor or getPixelValue ERROR");
-            return;
-        }
-
-        // check setPixelValue
-        for (int i = 0; i < 16; i++)
-        {
-            try
+            else
             {
-                img1.setPixelValue(i, 0, true);            
+                System.out.println("Invalid choice");
             }
-            catch (PixelOutOfBoundException e)
-            {
-                System.out.println("Errorrrrrrrr");
-            }
-        }
+            System.out.println("Before: \n" + str);
+            System.out.println("After: \n"+img1.toStringUnCompressed());
+            
+            break;
+            case 3:
+            img1.invert();
+            System.out.println(img1.toStringUnCompressed());
+        
 
-        // check numberOfBlackPixels
-        int[] img1_black = img1.numberOfBlackPixels();
-        success = success && (img1_black.length == 16);
-        for (int i = 0; i < 16 && success; i++)
-            success = success && (img1_black[i] == 15);
-        if (!success)
-        {
-            System.out.println("setPixelValue or numberOfBlackPixels ERROR");
-            return;
-        }
-
-        // check invert
-        img1.invert();
-        for (int i = 0; i < 16; i++)
-        {
-            try
-            {
-                success = success && !(img1.getPixelValue(i, 0));            
-            }
-            catch (PixelOutOfBoundException e)
-            {
-                System.out.println("Errorrrrrrrr");
-            }
-        }
-        if (!success)
-        {
-            System.out.println("invert or getPixelValue ERROR");
-            return;
-        }
-
-        // check Or
-        try
-        {
-            img1.performOr(img2);        
-        }
-        catch (BoundsMismatchException e)
-        {
-            System.out.println("Errorrrrrrrr");
-        }
-        for (int i = 0; i < 16; i++)
-            for (int j = 0; j < 16; j++)
-            {
-                try
-                {
-                    success = success && img1.getPixelValue(i,j);
-                }
-                catch (PixelOutOfBoundException e)
-                {
-                    System.out.println("Errorrrrrrrr");
-                }
-            }
-        if (!success)
-        {
-            System.out.println("performOr or getPixelValue ERROR");
-            return;
-        }
-
-        // check And
-        try
-        {
-            img1.performAnd(img2);    
-        }
-        catch (BoundsMismatchException e)
-        {
-            System.out.println("Errorrrrrrrr");
-        }
-        for (int i = 0; i < 16; i++)
-            for (int j = 0; j < 16; j++)
-            {
-                try
-                {
-                    success = success && (img1.getPixelValue(i,j) == img2.getPixelValue(i,j));             
-                }
-                catch (PixelOutOfBoundException e)
-                {
-                    System.out.println("Errorrrrrrrr");
-                }
-            }
-        if (!success)
-        {
-            System.out.println("performAnd or getPixelValue ERROR");
-            return;
-        }
-
-        // check toStringUnCompressed
-        String img_ans_uncomp = "16 16, 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1, 1 1 1 1 1 0 0 0 1 1 1 1 1 1 1 1, 1 1 1 0 0 0 0 0 1 1 1 1 1 1 1 1, 1 1 0 0 0 0 0 0 1 1 1 1 1 1 1 1, 1 1 0 1 1 1 0 0 1 1 1 1 1 1 1 1, 1 1 1 1 1 1 0 0 1 1 1 1 1 1 1 1, 1 1 1 1 1 1 0 0 1 1 1 1 1 1 1 1, 1 1 1 1 0 0 0 1 1 1 1 1 1 1 1 1, 1 1 0 0 0 1 1 1 1 1 1 1 1 1 1 1, 1 1 0 0 1 1 1 1 1 1 1 1 1 1 0 0, 1 1 0 1 1 1 1 1 1 1 1 1 1 0 0 0, 1 1 1 1 1 1 1 1 1 1 1 0 0 0 1 1, 1 1 1 1 1 1 1 1 1 1 1 0 0 1 1 1, 1 1 1 1 1 1 1 1 1 1 0 0 1 1 1 1, 1 1 1 1 1 1 1 1 1 0 0 1 1 1 1 1, 1 1 1 1 1 1 1 0 0 0 1 1 1 1 1 1";
-        success = success && (img1.toStringUnCompressed().equals(img_ans_uncomp)) && (img2.toStringUnCompressed().equals(img_ans_uncomp));
-        if (!success)
-        {
-            System.out.println("toStringUnCompressed ERROR");
-            return;
-        }
-        else
-            System.out.println("ALL TESTS SUCCESSFUL! YAYY!");
     }
+    }
+    }
+    catch (PixelOutOfBoundException e) 
+    {
+     System.out.println("this");   
+    }
+}
+
 }
 
 
