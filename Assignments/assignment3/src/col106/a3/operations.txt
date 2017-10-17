@@ -1,0 +1,15 @@
+4
+insert one 1
+insert one 2
+insert one 3
+insert one 4
+insert one 5
+insert one 6
+insert two 2
+insert e 11
+insert m 11
+insert m 11
+insert m 11
+insert fifty 50
+insert fifty 6
+print

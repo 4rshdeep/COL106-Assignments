@@ -70,7 +70,6 @@ public class LinkedListImage implements CompressedImageInterface {
                             Node newNode = new Node(j - 1);
                             tempNode = arrayOfLists[i];
                             if (tempNode.val == -1) {
-                                System.out.println("This occurs");
                                 newNode.next = arrayOfLists[i];
                                 arrayOfLists[i] = newNode;
                                 tailPtrs[i] = newNode;
