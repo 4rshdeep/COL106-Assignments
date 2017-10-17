@@ -31,7 +31,7 @@ public class Main {
                         System.out.println(tree.isEmpty());
                         break;
                     case "search":
-                        // System.out.println(tree.search(s.next()));
+                        System.out.println(tree.search(s.next()));
                         break;
                     case "print_num_keys":
                         Node tempNode = tree.getRoot();
@@ -40,9 +40,9 @@ public class Main {
                     case "size":
                         System.out.println(tree.size());
                         break;
-                    case "ts":
-                        tree.testSearch(s.next());
-                        break;
+                    // case "ts":
+                    //     tree.testSearch(s.next());
+                    //     break;
                 }
             } catch (Exception e) {
                 System.out.println(e);

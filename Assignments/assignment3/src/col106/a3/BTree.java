@@ -66,46 +66,41 @@ public class BTree<Key extends Comparable<Key>,Value> implements DuplicateBTree<
 
     @Override
     public List<Value> search(Key key) throws IllegalKeyException {
-        List<Value> list = new Vector<Value>();
-        // List<Value> list = getSearch(key, root);
-        // list.removeAll(Collections.singleton(null));
-        return list;
+        List<Value> list = getSearch(key, root);
+        list.removeAll(Collections.singleton(null));
+        Value[] vals = (Value[]) (list.toArray());
+        Collections.reverse(list);
+		return list;
     }
 
-    public void testSearch(Key key) {
-    	if ((root == null) || (num_nodes == 0)) {
-    		System.out.println("Root is empty or null");
-    	}
-    	getSearch(key, root);
-    	System.out.println();
-    }
+    // public void testSearch(Key key) {
+    // 	if ((root == null) || (num_nodes == 0)) {
+    // 		System.out.println("Root is empty or null");
+    // 	}
+    // 	getSearch(key, root);
+    // 	System.out.println();
+    // }
 
     
 
     /* return list can have null values */
-    // public List<Value> getSearch(Key key, Node node) {
-    public void getSearch(Key key, Node node) {
-        // List<Value> list = new Vector<Value>();
+    public List<Value> getSearch(Key key, Node node) {
+        List<Value> list = new Vector<Value>();
         if (node == null) {
-        	return;
+        	return null;
         }
         int i = 0;
         int n = node.num_keys;
         if (node.isLeaf) {
-
-            // 	System.out.println("N is " + n);
             while (i<n) {
-            // 	System.out.println("I is " + i);
             	Key temp = (Key) node.key[i];
             	if (temp.compareTo(key)==0) {
-            // 		// list.add((Value)node.value[i]);
-            		System.out.print(node.value[i] + ", ");
-           		}
+            		list.add((Value)node.value[i]);
+            	}
 
             	i = i+1;
             }
-            return;
-            // return list;
+            return list;
         }
 
         while(i<n) {
@@ -114,52 +109,34 @@ public class BTree<Key extends Comparable<Key>,Value> implements DuplicateBTree<
                 int j=i;
                 
                 // add left subtree
-                // list.addAll(getSearch(key, node.children[i]));
+                list.addAll(getSearch(key, node.children[i]));
 
-                getSearch(key, node.children[i]);
-
-                // method to print list
-                // System.out.println("1--" + Arrays.toString(list.toArray()));
-
+           
+           
                 // add element and then search in right subtree
                 while(j<n) {
-                	
-                    System.out.print(node.value[j] + ", ");
-                    
-                    // list.add((Value)(node.value[j]));
-                    getSearch(key, node.children[j+1]);
-
-                    // System.out.println("2.1--" + Arrays.toString(list.toArray()));
-                    // list.addAll(getSearch(key, node.children[j+1]));
-                    // System.out.println("2.2--" + Arrays.toString(list.toArray()));
-                    
+                    list.add((Value)(node.value[j]));
+                    list.addAll(getSearch(key, node.children[j+1]));
+              
                     j = j+1;
-                    // if the next key is different we need to stop
+            // if the next key is different we need to stop
                     if (j!=n) {
                     	if ((((Key)node.key[j]).compareTo((key))!=0)) {
-                        	return;
+                        	return list;
                     	}
                     }
                 }
-                return;
-                //list.removeAll(Collections.singleton(null));  
-                // return list;                
+                return list;
             }
             else if (((Key)node.key[i]).compareTo(key) > 0) {
-            	// System.out.println("3--" + Arrays.toString(list.toArray()));
-                // list.addAll(getSearch(key, node.children[i]));
-                getSearch(key, node.children[i]);
-                return;
-                // return list;
+                list.addAll(getSearch(key, node.children[i]));
+                return list;
             }
 
             i = i+1;
         }
-        
         // if neither the key is equal nor less than and not the leaf node then search in the last child
-    	// return getSearch(key, node.children[n+1]);
-        getSearch(key, node.children[n]);
-        return;
+    	return getSearch(key, node.children[n+1]);
     }
 
 
