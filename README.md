@@ -23,3 +23,4 @@ To make the settings permanent, type below command
 echo "options rtl8723be ant_sel=2" | sudo tee /etc/modprobe.d/50-rtl8723be.conf
 Note: After your OS (Kernel) update, you need to apply these settings again to get strong signal.
 
+https://askubuntu.com/questions/914048/realtek-rtl8723be-weak-wifi-signal-and-disconnects
