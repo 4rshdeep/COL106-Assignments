@@ -20,3 +20,7 @@ run: compile test
 
 clean:
 	-rm *.class
+
+btree: 
+	javac BTree.java
+	java BTree

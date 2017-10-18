@@ -2,6 +2,7 @@ import java.util.List;
 import java.util.Vector;
 import java.util.Collections;
 import java.util.Arrays;
+import java.util.Scanner;
 
 public class BTree<Key extends Comparable<Key>,Value> implements DuplicateBTree<Key,Value> {
 
@@ -69,7 +70,7 @@ public class BTree<Key extends Comparable<Key>,Value> implements DuplicateBTree<
         List<Value> list = getSearch(key, root);
         list.removeAll(Collections.singleton(null));
         Value[] vals = (Value[]) (list.toArray());
-        Collections.reverse(list);
+        // Collections.reverse(list);
 		return list;
     }
 
@@ -239,55 +240,354 @@ public class BTree<Key extends Comparable<Key>,Value> implements DuplicateBTree<
     	if ((root == null)||(root.num_keys==0)) {
     	    return;
 		}
+        else if (root.isLeaf) {
+            Node node = root;
+            
+            int n = node.num_keys;
+            int i = 0;
+            int j = 0;
+            
+            while (i<n) {
+            // find first occuurence of the key
+                if (key.compareTo((Key)node.key[i])==0) {
+                // copy i+1 in i and reduce num_keys
+                // if i is not the last key
+                    if (i!=n-1) {
+                        if (((Key)node.key[n-1]).compareTo(key)==0){
+                            node.num_keys = i;
+                            return;
+                        }
+                    //duplicates are not present from i to n-1 since n-1 is not same                
+                        j = i;
+                    // delete duplicates
+                        while((j>=i)&&(j<n-1)) {
+                            j = j+1;
+                            if (((Key)node.key[j]).compareTo(key)!=0) {
+                    // this means they are equal till j-1th index
+                                j = j-1;
+                                break;
+                            }
+                        }
+                    // i to j indices contain duplicates 
+                    // replace i by j+1
+                        node.num_keys = node.num_keys - (j-i+1);
+                        for (int k=j+1; k<n; k++) {
+                            node.value[i] = node.value[k];
+                            node.key[i]   = node.key[k];
+                            i = i+1;
+                        }
+                    }
+                    // if i is the last key
+                    else if (i == n-1) {
+                        node.num_keys = node.num_keys -1;
+                    }
+                    return;
+                }
+                i = i+1;
+            }
+            return;
+        }
 		else {
-			single_pass_delete(key, root);
+			delete_key(key, root, null, -1);
 		}
     }
 
+    public void delete_key(Key key, Node node, Node parentNode, int idx) throws IllegalKeyException {
+        int n = node.num_keys;
+        // List<Value> list = search(key);
+        // int total_keys = list.size();
+        // //Todo see if we need list or not
+        int i = 0;
+        int j = 0;
+
+        // check if node contains the key
+        int check = contains(key, node);
+        if (check != -1) {
+
+            // two cases if internal node or leaf node maintain t-1 keys after deletion assume t initially
+            if (node.isLeaf) {
+                int b = count(key, node);
+                int num_keys = node.num_keys;
+                if (num_keys>=(t+b-1)) {
+                    System.out.println(1);
+                    delete_from_leaf(key, node);
+                    return;   
+                }
+                else if (b<t) {
+                    System.out.println(2);
+                    int key_diff = (t+b-1) - num_keys;
+                    // Todo keys should not decrease
+                    while (key_diff>0) {
+                        if (idx!=0) {
+                            if (parentNode.children[idx-1].num_keys > t-1) {
+                                fill_from_prev(parentNode, idx);
+                                key_diff = key_diff -1;
+                            }
+                        }
+                        else if (parentNode.children[idx+1].num_keys > t-1) {
+                            fill_from_next(parentNode, idx);
+                            key_diff = key_diff -1;
+                        }
+                        else {
+                            merge_down(parentNode, idx);
+                            key_diff = key_diff - t;
+                        }
+                    }
+                    delete_from_leaf(key, node);
+                    return;
+                }
+                else if (b>=t) {
+                    System.out.println(3);
+                    delete_from_leaf(key, node);
+                    System.out.println(node.num_keys);
+                    while(node.num_keys < t-1) {
+                        // Todo whenever fill from prev check whether idx not equal to zero
+                        if (idx!=0) {
+                            if (parentNode.children[idx-1].num_keys > t-1) {
+                                fill_from_prev(parentNode, idx);
+                            }    
+                        }
+                        else if (parentNode.children[idx+1].num_keys > t-1) {
+                            fill_from_next(parentNode, idx);
+                        }
+                        else {
+                            merge_down(parentNode, idx);
+                        }
+                    }
+                }
+                else {
+                    System.out.println("you should not be here");
+                }
+
+
+
+                // else if ((b<((2*t)-1))) {
+                //     // node is parentNode.children[idx]
+                    // while (b!=0) {
+                    //     if (parentNode.children[i-1].num_keys > t-1) {
+                    //         fill_from_prev(node, i);
+                    //     }
+                    //     else if (parentNode.children[i+1].num_keys > t-1) {
+                    //         fill_from_next(node, i);
+                    //     }
+                    //     else {
+                    //         merge_down(node, i);
+                    //     }
+
+                    // }
+                // }
+            }
+            else {
+                
+            }
+            
+            
+        }
+        else {
+            while ((i<n)&&(key.compareTo((Key)node.key[i])>0)) {
+                i = i + 1;
+            }
+            // now we know key is in the ith subtree
+            // instead of maintaining t keys maintain t+b keys where b are number of occurences of that key in that subtree
+            int keys = node.children[i].num_keys;
+
+            System.out.println("in the else");
+            
+            if (keys == t-1) {
+                if ((i!=0)&&(node.children[i-1].num_keys > t-1)) {
+                    fill_from_prev(node, i);
+                }
+                else if ((node.children[i+1].num_keys > t-1)&&(i<node.num_keys)) {
+                    fill_from_next(node, i);
+                }
+                else {
+                    if ((i>=0)&&(i<n)) {
+                        merge_down(node, i);    
+                    }
+                    
+                }
+            }
+            delete_key(key, node.children[i], node, i);
+            return;
+        }
+
+    }
+
+    public int count(Key key, Node node) {
+        int i = 0;
+        int n = node.num_keys;
+        int sum = 0;
+        while (i<n) {
+            if (key.compareTo((Key)node.key[i])==0) {
+                sum = sum+1;
+            }
+            i = i+1;
+        }
+        return sum;
+    }
+
+    public int contains(Key key, Node node) {
+        int i = 0;
+        int n = node.num_keys;
+        while (i<n) {
+            if (key.compareTo((Key)node.key[i])==0) {
+                return i;
+            }
+            i = i+1;
+        }
+        return -1;
+    }
+
+    public void merge_down(Node node, int i) {
+        Node targetNode = node.children[i];
+        Node nextNode   = node.children[i+1];
+        int num_curr    = targetNode.num_keys;
+        int num_next    = nextNode.num_keys;
+
+    // merging i+1 th child with i th child
+        if (root.equals(node)) {
+            node.num_keys = 1;
+            root          = targetNode;
+        }
+
+        targetNode.key[num_curr] = node.key[i];
+        targetNode.value[num_curr] = node.value[i];
+        targetNode.children[num_curr+1] = nextNode.children[0];
+
+        num_curr = num_curr + 1;
+
+        for (int l=0; l<num_next; l++) {
+            targetNode.key[num_curr+l]   = nextNode.key[l];
+            targetNode.value[num_curr+l] = nextNode.value[l];
+            targetNode.children[num_curr+1+l] = nextNode.children[l+1];
+        }
+
+        int num_head = node.num_keys;
+        for (int k=i; k<num_head-1; k++) {
+            node.key[i] = node.key[i+1];
+            node.value[i] = node.value[i+1];
+            node.children[i+1] = node.children[i+2];
+        }
+
+        node.num_keys       = node.num_keys - 1;
+        targetNode.num_keys = targetNode.num_keys + nextNode.num_keys + 1; 
+
+    }
+
+    // fill from i-1 th child into i
+    public void fill_from_prev(Node node, int i) {
+     // add node.key[i] in front
+        Node prevNode = node.children[i-1];
+        Node targetNode = node.children[i];
+
+        int num_left = prevNode.num_keys;
+        int num_curr = targetNode.num_keys;
+        
+        targetNode.children[num_curr+1] = targetNode.children[num_curr];
+
+        for (int l=num_curr; l>0; l--) {
+            targetNode.key[l] = targetNode.key[l-1];
+            targetNode.children[l] = targetNode.children[l-1];
+        }
+        
+        targetNode.key[0]   = node.key[i-1];
+        targetNode.value[0] = node.value[i-1];
+        targetNode.children[0] = prevNode.children[num_left];
+        
+        node.value[i-1]     = prevNode.value[num_left-1];
+        node.key[i-1]       = prevNode.key[num_left-1];
+       
+        // increment keys in target node
+        targetNode.num_keys = targetNode.num_keys + 1;
+        // decrement keys in prevNode
+        prevNode.num_keys   = prevNode.num_keys -1;
+
+    }
+
+    public void fill_from_next(Node node, int i) {
+        Node targetNode = node.children[i];
+        Node nextNode   = node.children[i+1];
+
+        int num_curr    = targetNode.num_keys;
+        int num_next    = nextNode.num_keys;
+
+        targetNode.key[num_curr] = node.key[i];
+        targetNode.value[num_curr] = node.value[i];
+        targetNode.children[num_curr+1] = nextNode.children[0];
+
+        node.key[i]     = nextNode.key[0];
+        node.value[i]   = nextNode.value[0];
+
+        nextNode.children[0] = nextNode.children[1];
+
+        for (int l=1; l<num_next; l++) {
+            nextNode.value[l-1] = nextNode.value[l];
+            nextNode.key[l-1] = nextNode.key[l];
+            nextNode.children[l] = nextNode.children[l+1];
+        }
+
+        nextNode.num_keys = nextNode.num_keys - 1;
+        targetNode.num_keys = targetNode.num_keys + 1;
+
+    }
+
+
+    public Key getPredecessor(int i, Node node) {
+        Node tempNode =  node.children[i];
+        int n        = tempNode.num_keys;
+        return (Key)tempNode.key[n-1];
+    }
+
+    public Key getSuccessor(int i, Node node) {
+        Node tempNode =  node.children[i+1];
+        return (Key)tempNode.key[0];
+    }
+
+
  //    public void single_pass_delete(Key key, Node node) throws IllegalKeyException {
- //    	if (node.isLeaf) {
- //    		int n = node.num_keys;
-	//     	int i = 0;
-	//    		int j = 0;
-	//    		while (i<n) {
-	//    			// find first occuurence of the key
-	//    			if (key.compareTo((Key)node.key[i])==0) {
-	//    				// copy i+1 in i and reduce num_keys
-	//    				// if i is not the last key
-	//    				if (i!=n-1) {
-	//    					if (((Key)node.key[n-1]).compareTo(key)==0){
-	//    						node.num_keys = i;
-	//    						return;
-	//    					}
-	//    					//duplicates are not present from i to n-1 since n-1 is not same				
-	//    					j = i;
-	//    					// delete duplicates
-	//    					while((j>=i)&&(j<n-1)) {
-	//    						j = j+1;
-	//    						if (((Key)node.key[j]).compareTo(key)!=0) {
-	//    					// this means they are equal till j-1th index
-	//    							j = j-1;
-	//    							break;
-	//    						}
-	//    					}
-	//    					// i to j indices contain duplicates 
-	//    					// replace i by j+1
-	//    					node.num_keys = node.num_keys - (j-i+1);
-	//    					for (int k=j+1; k<n; k++) {
-	//    						node.value[i] = node.value[k];
-	//    						node.key[i]	  = node.key[k];
-	//    						i = i+1;
-	//    					}
-	//    				}
-	//    				// if i is the last key
-	//    				else if (i == n-1) {
-	//    					node.num_keys = node.num_keys -1;
-	//    				}
-	//    				return;
-	//    			}
-	//    			i = i+1;
-	//    		}
-	//    		return;
+    	// if (node.isLeaf) {
+    	// 	int n = node.num_keys;
+	    // 	int i = 0;
+	   	// 	int j = 0;
+	   	// 	while (i<n) {
+	   	// 		// find first occuurence of the key
+	   	// 		if (key.compareTo((Key)node.key[i])==0) {
+	   	// 			// copy i+1 in i and reduce num_keys
+	   	// 			// if i is not the last key
+	   	// 			if (i!=n-1) {
+	   	// 				if (((Key)node.key[n-1]).compareTo(key)==0){
+	   	// 					node.num_keys = i;
+	   	// 					return;
+	   	// 				}
+	   	// 				//duplicates are not present from i to n-1 since n-1 is not same				
+	   	// 				j = i;
+	   	// 				// delete duplicates
+	   	// 				while((j>=i)&&(j<n-1)) {
+	   	// 					j = j+1;
+	   	// 					if (((Key)node.key[j]).compareTo(key)!=0) {
+	   	// 				// this means they are equal till j-1th index
+	   	// 						j = j-1;
+	   	// 						break;
+	   	// 					}
+	   	// 				}
+	   	// 				// i to j indices contain duplicates 
+	   	// 				// replace i by j+1
+	   	// 				node.num_keys = node.num_keys - (j-i+1);
+	   	// 				for (int k=j+1; k<n; k++) {
+	   	// 					node.value[i] = node.value[k];
+	   	// 					node.key[i]	  = node.key[k];
+	   	// 					i = i+1;
+	   	// 				}
+	   	// 			}
+	   	// 			// if i is the last key
+	   	// 			else if (i == n-1) {
+	   	// 				node.num_keys = node.num_keys -1;
+	   	// 			}
+	   	// 			return;
+	   	// 		}
+	   	// 		i = i+1;
+	   	// 	}
+	   	// 	return;
     		
  //    	}
  //    	else {
@@ -335,78 +635,50 @@ public class BTree<Key extends Comparable<Key>,Value> implements DuplicateBTree<
  //    	}
  //    }
 
-    // public void delete_from_leaf(Key key, Node node) throws IllegalKeyException {
-    // 	int n = node.num_keys;
-    // 	int i = 0;
-   	// 	int j = 0;
-   	// 	while (i<n) {
-   	// 		// find first occuurence of the key
-   	// 		if (key.compareTo((Key)node.key[i])==0) {
-   	// 			// copy i+1 in i and reduce num_keys
-   	// 			// if i is not the last key
-   	// 			if (i!=n-1) {
-   	// 				if (((Key)node.key[n-1]).compareTo(key)==0){
-   	// 					node.num_keys = i;
-   	// 					return;
-   	// 				}
-   	// 				//duplicates are not present from i to n-1 since n-1 is not same				
-   	// 				j = i;
-   	// 				// delete duplicates
-   	// 				while((j>=i)&&(j<n-1)) {
-   	// 					j = j+1;
-   	// 					if (((Key)node.key[j]).compareTo(key)!=0) {
-   	// 				// this means they are equal till j-1th index
-   	// 						j = j-1;
-   	// 						break;
-   	// 					}
-   	// 				}
-   	// 				// i to j indices contain duplicates 
-   	// 				// replace i by j+1
-   	// 				node.num_keys = node.num_keys - (j-i+1);
-   	// 				for (int k=j+1; k<n; k++) {
-   	// 					node.value[i] = node.value[k];
-   	// 					node.key[i]	  = node.key[k];
-   	// 					i = i+1;
-   	// 				}
-   	// 			}
-   	// 			// if i is the last key
-   	// 			else if (i == n-1) {
-   	// 				node.num_keys = node.num_keys -1;
-   	// 			}
-   	// 			return;
-   	// 		}
-   	// 		i = i+1;
-   	// 	}
-   	// 	return;
-    // }
-
-    // public void delete_from_internal(Key key, Node node) {
-
-    // }
-
-    // public Key getPredecessor(int i, Node node) {
-    // 	Node tempNode =  node.children[i];
-    // 	Node n 		  = tempNode.num_keys;
-    // 	return tempNode.key[n-1];
-    // }
-
-    // public Key getSuccessor(int i, Node node) {
-    // 	Node tempNode =  node.children[i+1];
-    // 	return tempNode.key[0];
-    // }
-
-    // public void fill_from_prev(Key key, Node node) {
-
-    // }
-
-    // public void fill_from_next(Key key, Node node) {
-
-    // }
-
-    // public void merge_down(Key key, Node node) {
-
-    // }
-
+    public void delete_from_leaf(Key key, Node node) throws IllegalKeyException {
+    	int n = node.num_keys;
+    	int i = 0;
+   		int j = 0;
+   		while (i<n) {
+   			// find first occuurence of the key
+   			if (key.compareTo((Key)node.key[i])==0) {
+   				// copy i+1 in i and reduce num_keys
+   				// if i is not the last key
+   				if (i!=n-1) {
+   					if (((Key)node.key[n-1]).compareTo(key)==0){
+   						node.num_keys = i;
+   						return;
+   					}
+   					//duplicates are not present from i to n-1 since n-1 is not same				
+   					j = i;
+   					// delete duplicates
+   					while((j>=i)&&(j<n-1)) {
+   						j = j+1;
+   						if (((Key)node.key[j]).compareTo(key)!=0) {
+   					// this means they are equal till j-1th index
+   							j = j-1;
+   							break;
+   						}
+   					}
+   					// i to j indices contain duplicates 
+   					// replace i by j+1
+   					node.num_keys = node.num_keys - (j-i+1);
+   					for (int k=j+1; k<n; k++) {
+   						node.value[i] = node.value[k];
+   						node.key[i]	  = node.key[k];
+   						i = i+1;
+   					}
+   				}
+   				// if i is the last key
+   				else if (i == n-1) {
+   					node.num_keys = node.num_keys -1;
+   				}
+   				return;
+   			}
+   			i = i+1;
+   		}
+   		return;
+    }
 
     @Override
     public String toString() {
@@ -429,11 +701,63 @@ public class BTree<Key extends Comparable<Key>,Value> implements DuplicateBTree<
         else {
             int num_k = node.num_keys;
             for (int i=0; i<num_k; i++) {
-                str.append(getString(node.children[i]) + ", ");
-                str.append(node.key[i].toString() + "=" + node.value[i].toString() + ", ");
+                // if (node.children[i].num_keys != 0) {
+                    str.append(getString(node.children[i]) + ", ");
+                    str.append(node.key[i].toString() + "=" + node.value[i].toString() + ", ");
+                // }
             }
             str.append(getString(node.children[num_k])+"]");
             return str.toString();
+        }
+    }
+
+
+    public static void main(String[] args) throws Exception {
+        Scanner s = new Scanner(System.in);
+        System.out.println("B tree size");
+        int n = s.nextInt();
+        // DuplicateBTree<String, String> tree = new BTree<>(n);
+        BTree<String, String> tree = new BTree<>(n);
+        while (true) {
+            String command = s.next();
+            try {
+                switch (command) {
+                    case "exit":
+                        System.exit(0);
+                    case "insert":
+                        tree.insert(s.next(), s.next());
+                        System.out.println(tree);
+                        break;
+                    case "delete":
+                        tree.delete(s.next());
+                        System.out.println(tree);
+                        break;
+                    case "print":
+                        System.out.println(tree);
+                        break;
+                    case "height":
+                        System.out.println(tree.height());
+                        break;
+                    case "empty":
+                        System.out.println(tree.isEmpty());
+                        break;
+                    case "search":
+                        System.out.println(tree.search(s.next()));
+                        break;
+                    case "print_num_keys":
+                        Node tempNode = tree.getRoot();
+                        System.out.println(tempNode.num_keys);
+                        break;
+                    case "size":
+                        System.out.println(tree.size());
+                        break;
+                }
+            } catch (Exception e) {
+                System.out.println(e);
+                StackTraceElement[] elements = e.getStackTrace();  
+                for (int iterator=1; iterator<=elements.length; iterator++)  
+                System.out.println("Class Name:"+elements[iterator-1].getClassName()+" Method Name:"+elements[iterator-1].getMethodName()+" Line Number:"+elements[iterator-1].getLineNumber());
+            }   
         }
     }
 }
