@@ -73,16 +73,6 @@ public class BTree<Key extends Comparable<Key>,Value> implements DuplicateBTree<
 		return list;
     }
 
-    // public void testSearch(Key key) {
-    // 	if ((root == null) || (num_nodes == 0)) {
-    // 		System.out.println("Root is empty or null");
-    // 	}
-    // 	getSearch(key, root);
-    // 	System.out.println();
-    // }
-
-    
-
     /* return list can have null values */
     public List<Value> getSearch(Key key, Node node) {
         List<Value> list = new Vector<Value>();
@@ -199,11 +189,6 @@ public class BTree<Key extends Comparable<Key>,Value> implements DuplicateBTree<
         }
     }
 
-    @Override
-    public void delete(Key key) throws IllegalKeyException {
-        throw new RuntimeException("Not Implemented");
-    }
-
     // code to split ith child which is not full
     public void split_child(Node node, int s) {
         Node y = node.children[s];
@@ -249,6 +234,181 @@ public class BTree<Key extends Comparable<Key>,Value> implements DuplicateBTree<
         
     }
 
+    @Override
+    public void delete(Key key) throws IllegalKeyException {
+    	if ((root == null)||(root.num_keys==0)) {
+    	    return;
+		}
+		else {
+			single_pass_delete(key, root);
+		}
+    }
+
+ //    public void single_pass_delete(Key key, Node node) throws IllegalKeyException {
+ //    	if (node.isLeaf) {
+ //    		int n = node.num_keys;
+	//     	int i = 0;
+	//    		int j = 0;
+	//    		while (i<n) {
+	//    			// find first occuurence of the key
+	//    			if (key.compareTo((Key)node.key[i])==0) {
+	//    				// copy i+1 in i and reduce num_keys
+	//    				// if i is not the last key
+	//    				if (i!=n-1) {
+	//    					if (((Key)node.key[n-1]).compareTo(key)==0){
+	//    						node.num_keys = i;
+	//    						return;
+	//    					}
+	//    					//duplicates are not present from i to n-1 since n-1 is not same				
+	//    					j = i;
+	//    					// delete duplicates
+	//    					while((j>=i)&&(j<n-1)) {
+	//    						j = j+1;
+	//    						if (((Key)node.key[j]).compareTo(key)!=0) {
+	//    					// this means they are equal till j-1th index
+	//    							j = j-1;
+	//    							break;
+	//    						}
+	//    					}
+	//    					// i to j indices contain duplicates 
+	//    					// replace i by j+1
+	//    					node.num_keys = node.num_keys - (j-i+1);
+	//    					for (int k=j+1; k<n; k++) {
+	//    						node.value[i] = node.value[k];
+	//    						node.key[i]	  = node.key[k];
+	//    						i = i+1;
+	//    					}
+	//    				}
+	//    				// if i is the last key
+	//    				else if (i == n-1) {
+	//    					node.num_keys = node.num_keys -1;
+	//    				}
+	//    				return;
+	//    			}
+	//    			i = i+1;
+	//    		}
+	//    		return;
+    		
+ //    	}
+ //    	else {
+ //    		int j = 0;
+ //    		int i = 0;
+ //    		int n = node.num_keys;
+ //    		Key tempKey = (Key) new Object();
+ //    		while(i<n) {
+ //    			// if key is in the internal node		
+ //    			if (key.compareTo((Key)node.key[i])==0) {
+	// // Between any two duplicates anything would be duplicate     				
+ //    				// if the last key is same 
+ //    				if (((Key)node.key[n-1]).compareTo(key)==0){
+    					
+ //    					if (node.children[i].num_keys>t-1) {
+ //    						tempKey = getPredecessor(i, node);    						
+ //    					}
+ //    					else if (node.children[i+1].num_keys>t-1) {
+ //    						tempKey = getSuccessor(i, node);
+ //    					}
+ //    					// delete current keys
+ //    					//delete key in node.children[i];
+ //    					//delete key in	node.children[n];
+ //    				}
+
+ //    				j = i;
+ //    				// delete duplicates
+ //    				while((j>=i)&&(j<n-1)) {
+ //    					j = j+1;
+ //    					if (((Key)node.key[j]).compareTo(key)!=0) {
+ //    				// this means they are equal till j-1th index
+ //    						j = j-1;
+ //    						break;
+ //    					}
+ //    				}
+ //    				// everything from index i to j-1 are duplicates of the keys including the children
+
+ //    			}
+ //    			//or it is not in the internal node
+ //    			else {
+    				
+ //    			}
+ //    		}
+    		
+ //    	}
+ //    }
+
+    // public void delete_from_leaf(Key key, Node node) throws IllegalKeyException {
+    // 	int n = node.num_keys;
+    // 	int i = 0;
+   	// 	int j = 0;
+   	// 	while (i<n) {
+   	// 		// find first occuurence of the key
+   	// 		if (key.compareTo((Key)node.key[i])==0) {
+   	// 			// copy i+1 in i and reduce num_keys
+   	// 			// if i is not the last key
+   	// 			if (i!=n-1) {
+   	// 				if (((Key)node.key[n-1]).compareTo(key)==0){
+   	// 					node.num_keys = i;
+   	// 					return;
+   	// 				}
+   	// 				//duplicates are not present from i to n-1 since n-1 is not same				
+   	// 				j = i;
+   	// 				// delete duplicates
+   	// 				while((j>=i)&&(j<n-1)) {
+   	// 					j = j+1;
+   	// 					if (((Key)node.key[j]).compareTo(key)!=0) {
+   	// 				// this means they are equal till j-1th index
+   	// 						j = j-1;
+   	// 						break;
+   	// 					}
+   	// 				}
+   	// 				// i to j indices contain duplicates 
+   	// 				// replace i by j+1
+   	// 				node.num_keys = node.num_keys - (j-i+1);
+   	// 				for (int k=j+1; k<n; k++) {
+   	// 					node.value[i] = node.value[k];
+   	// 					node.key[i]	  = node.key[k];
+   	// 					i = i+1;
+   	// 				}
+   	// 			}
+   	// 			// if i is the last key
+   	// 			else if (i == n-1) {
+   	// 				node.num_keys = node.num_keys -1;
+   	// 			}
+   	// 			return;
+   	// 		}
+   	// 		i = i+1;
+   	// 	}
+   	// 	return;
+    // }
+
+    // public void delete_from_internal(Key key, Node node) {
+
+    // }
+
+    // public Key getPredecessor(int i, Node node) {
+    // 	Node tempNode =  node.children[i];
+    // 	Node n 		  = tempNode.num_keys;
+    // 	return tempNode.key[n-1];
+    // }
+
+    // public Key getSuccessor(int i, Node node) {
+    // 	Node tempNode =  node.children[i+1];
+    // 	return tempNode.key[0];
+    // }
+
+    // public void fill_from_prev(Key key, Node node) {
+
+    // }
+
+    // public void fill_from_next(Key key, Node node) {
+
+    // }
+
+    // public void merge_down(Key key, Node node) {
+
+    // }
+
+
+    @Override
     public String toString() {
         return getString(root);
     }

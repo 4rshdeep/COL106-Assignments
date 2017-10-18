@@ -20,6 +20,7 @@ public class Main {
                         break;
                     case "delete":
                         tree.delete(s.next());
+                        System.out.println(tree);
                         break;
                     case "print":
                         System.out.println(tree);
@@ -40,9 +41,6 @@ public class Main {
                     case "size":
                         System.out.println(tree.size());
                         break;
-                    // case "ts":
-                    //     tree.testSearch(s.next());
-                    //     break;
                 }
             } catch (Exception e) {
                 System.out.println(e);
