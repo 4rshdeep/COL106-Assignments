@@ -1,3 +1,5 @@
+package col106.a3;
+
 import java.util.Scanner;
 
 public class Main {

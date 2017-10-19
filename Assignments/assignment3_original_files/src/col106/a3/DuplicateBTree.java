@@ -1,4 +1,5 @@
 package col106.a3;
+
 import java.util.List;
 
 public interface DuplicateBTree<Key extends Comparable<Key>, Value> {
@@ -16,4 +17,3 @@ public interface DuplicateBTree<Key extends Comparable<Key>, Value> {
 
     public String toString(); /* Prints all the tree in the format listed below */
 }
-
