@@ -46,6 +46,14 @@ public class Main {
                     case "size":
                         System.out.println(tree.size());
                         break;
+                    case "get":
+                        System.out.println(tree.getPredecessor(tree.getRoot(), s.nextInt()).key);
+                        break;
+                    case "gets":
+                        KeyValue k = tree.getSuccessor(tree.getRoot(), s.nextInt());
+                        System.out.println(k.key);
+                        System.out.println(k.value);
+                        break;
                 }
             } catch (Exception e) {
                 System.out.println(e);
