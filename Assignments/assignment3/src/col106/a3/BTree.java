@@ -298,55 +298,19 @@ public class BTree<Key extends Comparable<Key>,Value> implements DuplicateBTree<
 
     public void delete_key(Key key, Node node, Node parentNode, int idx) throws IllegalKeyException {
         int n = node.num_keys;
-        // List<Value> list = search(key);
-        // int total_keys = list.size();
-        // //Todo see if we need list or not
         int i = 0;
         int j = 0;
 
         // check if node contains the key
         int check = contains(key, node);
         if (check != -1) {
-
-            // two cases if internal node or leaf node maintain t-1 keys after deletion assume t initially
+        // two cases if internal node or leaf node maintain t-1 keys after deletion assume t initially
             if (node.isLeaf) {
                 int b = count(key, node);
                 int num_keys = node.num_keys;
-                
-                // else if (b<t) {
-                //     System.out.println("b" + b);
-                //     System.out.println("t" + t);
-                //     System.out.println(2);
-                //     int key_diff = (t+b-1) - num_keys;
-                //     // Todo keys should not decrease
-                //     while (key_diff>0) {
-                        
-                //         if ((idx!=0)&&(parentNode.children[idx-1].num_keys > t-1)) {
-                //             System.out.println("fill from prev");
-                //             fill_from_prev(parentNode, idx);
-                //             key_diff = key_diff -1;
-                //         }
-                //         else if ((parentNode.children[idx+1].num_keys > t-1) && (idx<node.num_keys)){
-                //             System.out.println("fill from next");
-                //             fill_from_next(parentNode, idx);
-                //             key_diff = key_diff -1;
-                //         }
-                //         else {
-                //             if ((idx>=0)&&(idx<n)) {
-                //                 System.out.println(idx);
-                //                 System.out.println("merge");
-                //                 System.out.println(toString());
-                //                 merge_down(parentNode, idx);
-                //                 key_diff = key_diff - t;
-                //             }
-                //         }
-                //     }
-                //     delete_from_leaf(key, node);
-                //     return;
-                // }
-                // else if (b>=t) {
+
                 if (num_keys>=(t+b-1)) {
-                    System.out.println(1);
+                    System.out.println("suff keys in leaf node");
                     delete_from_leaf(key, node);
                     return;   
                 }
@@ -355,40 +319,40 @@ public class BTree<Key extends Comparable<Key>,Value> implements DuplicateBTree<
                     boolean second = false;
                     boolean third = false;
 
-                    System.out.println(3);
+                    System.out.println("insuff keys in leaf node");
                     delete_from_leaf(key, node);
-                    System.out.println(node.num_keys);
                     while(node.num_keys < t-1) {
-                        System.out.println("index: "+idx);
-                        System.out.println("keys: " + node.num_keys);
-                        System.out.println("reqd t-1: " + (t-1));
-                        // Todo whenever fill from prev check whether idx not equal to zero
+                    // Todo whenever fill from prev check whether idx not equal to zero
+                    // since parent has t keys therefore merging will always fill the void left due to delete
                         if ((idx!=0)) {
                             if ((parentNode.children[idx-1].num_keys > t-1)) {
                                 System.out.println("fill from prev");
                                 fill_from_prev(parentNode, idx);
                                 first = true;
                            }
+                           else {
+                               first = false;
+                           }
                         }
-                        if ((first==false)&&(idx<node.num_keys)) {
+                        if ((first==false)) {
                             if ((parentNode.children[idx+1].num_keys > t-1)) {
                                 System.out.println("fill from next");
                                 fill_from_next(parentNode, idx);
                                 second = true;
+                            }
+                            else {
+                                second = false;
                             }
                         }
                         if ((first==false)&&(second==false)) {
                             System.out.println("merge");
                             merge_down(parentNode, idx);
                             third = true;
-                            break;
+                            return;
                         }
-                        System.out.println(toString());
                     }
+                    return;
                 }
-                // else {
-                //     System.out.println("you should not be here");
-                // }
             }
             else {
                 System.out.println("I am thinking what to do!");             
@@ -402,9 +366,7 @@ public class BTree<Key extends Comparable<Key>,Value> implements DuplicateBTree<
                 i = i + 1;
             }
             // now we know key is in the ith subtree
-            // instead of maintaining t keys maintain t+b keys where b are number of occurences of that key in that subtree
             int keys = node.children[i].num_keys;
-
             System.out.println("in the else");
             
             if (keys == t-1) {
@@ -424,9 +386,7 @@ public class BTree<Key extends Comparable<Key>,Value> implements DuplicateBTree<
                     if ((i>=0)&&(i<n)) {
                         System.out.println("Time to merge nodes");
                         merge_down(node, i);
-                        System.out.println(toString());  
                     }
-                    
                 }
             }
             delete_key(key, node.children[i], node, i);
@@ -604,97 +564,6 @@ public class BTree<Key extends Comparable<Key>,Value> implements DuplicateBTree<
         return (Key)tempNode.key[0];
     }
 
-
- //    public void single_pass_delete(Key key, Node node) throws IllegalKeyException {
-    	// if (node.isLeaf) {
-    	// 	int n = node.num_keys;
-	    // 	int i = 0;
-	   	// 	int j = 0;
-	   	// 	while (i<n) {
-	   	// 		// find first occuurence of the key
-	   	// 		if (key.compareTo((Key)node.key[i])==0) {
-	   	// 			// copy i+1 in i and reduce num_keys
-	   	// 			// if i is not the last key
-	   	// 			if (i!=n-1) {
-	   	// 				if (((Key)node.key[n-1]).compareTo(key)==0){
-	   	// 					node.num_keys = i;
-	   	// 					return;
-	   	// 				}
-	   	// 				//duplicates are not present from i to n-1 since n-1 is not same				
-	   	// 				j = i;
-	   	// 				// delete duplicates
-	   	// 				while((j>=i)&&(j<n-1)) {
-	   	// 					j = j+1;
-	   	// 					if (((Key)node.key[j]).compareTo(key)!=0) {
-	   	// 				// this means they are equal till j-1th index
-	   	// 						j = j-1;
-	   	// 						break;
-	   	// 					}
-	   	// 				}
-	   	// 				// i to j indices contain duplicates 
-	   	// 				// replace i by j+1
-	   	// 				node.num_keys = node.num_keys - (j-i+1);
-	   	// 				for (int k=j+1; k<n; k++) {
-	   	// 					node.value[i] = node.value[k];
-	   	// 					node.key[i]	  = node.key[k];
-	   	// 					i = i+1;
-	   	// 				}
-	   	// 			}
-	   	// 			// if i is the last key
-	   	// 			else if (i == n-1) {
-	   	// 				node.num_keys = node.num_keys -1;
-	   	// 			}
-	   	// 			return;
-	   	// 		}
-	   	// 		i = i+1;
-	   	// 	}
-	   	// 	return;
-    		
- //    	}
- //    	else {
- //    		int j = 0;
- //    		int i = 0;
- //    		int n = node.num_keys;
- //    		Key tempKey = (Key) new Object();
- //    		while(i<n) {
- //    			// if key is in the internal node		
- //    			if (key.compareTo((Key)node.key[i])==0) {
-	// // Between any two duplicates anything would be duplicate     				
- //    				// if the last key is same 
- //    				if (((Key)node.key[n-1]).compareTo(key)==0){
-    					
- //    					if (node.children[i].num_keys>t-1) {
- //    						tempKey = getPredecessor(i, node);    						
- //    					}
- //    					else if (node.children[i+1].num_keys>t-1) {
- //    						tempKey = getSuccessor(i, node);
- //    					}
- //    					// delete current keys
- //    					//delete key in node.children[i];
- //    					//delete key in	node.children[n];
- //    				}
-
- //    				j = i;
- //    				// delete duplicates
- //    				while((j>=i)&&(j<n-1)) {
- //    					j = j+1;
- //    					if (((Key)node.key[j]).compareTo(key)!=0) {
- //    				// this means they are equal till j-1th index
- //    						j = j-1;
- //    						break;
- //    					}
- //    				}
- //    				// everything from index i to j-1 are duplicates of the keys including the children
-
- //    			}
- //    			//or it is not in the internal node
- //    			else {
-    				
- //    			}
- //    		}
-    		
- //    	}
- //    }
 
     public void delete_from_leaf(Key key, Node node) throws IllegalKeyException {
     	int n = node.num_keys;
