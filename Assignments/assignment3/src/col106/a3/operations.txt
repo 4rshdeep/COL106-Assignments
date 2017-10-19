@@ -22,3 +22,45 @@ insert one 1
 insert a 1
 insert a 1
 insert a 1
+
+---- 
+error
+6
+insert a 1
+insert one 1
+insert one 1
+insert p 1
+insert j 1
+insert a 1
+delete p
+
+-----------
+insert a 1
+insert one 1
+insert one 1
+insert p 1
+insert j 1
+insert a 1
+delete a
+insert a 1
+insert a 1
+delete j
+insert a 2
+delete a
+insert a 1
+insert b 1
+insert c 1
+delete c
+delete b
+insert b 1
+insert c 1
+delete a
+delete c
+insert a 1
+insert c 1
+insert c 1
+insert c 1
+insert c 1
+insert c 1
+delete a
+delete p
