@@ -6,6 +6,7 @@ import java.util.Collections;
 import java.util.Arrays;
 import java.util.Scanner;
 
+@SuppressWarnings("unchecked")
 public class BTree<Key extends Comparable<Key>, Value> implements DuplicateBTree<Key, Value> {
 
 	Node root;
@@ -576,6 +577,7 @@ public class BTree<Key extends Comparable<Key>, Value> implements DuplicateBTree
 	}
 }
 
+@SuppressWarnings("unchecked")
 class KeyValue<Key, Value> {
 	Key key;
 	Value value;
@@ -585,6 +587,7 @@ class KeyValue<Key, Value> {
 	}
 }
 
+@SuppressWarnings("unchecked")
 class Node <Key, Value> {
 	int num_keys;
 	Node[] children;
@@ -598,17 +601,14 @@ class Node <Key, Value> {
 		children = new Node[n + 1];
 		// level	 = 0;
 
-		@SuppressWarnings("unchecked")
 		Key[] key 	= (Key[]) new Object[n];
 		this.key 	= key;
 
-		@SuppressWarnings("unchecked")
 		Value[] val = (Value[]) new Object[n];
 		this.value 	= val;
 
 		isLeaf   	= true;
 
-		@SuppressWarnings("unchecked")
 		Node[] children = new Node[n + 1];
 		this.children = children;
 	}
