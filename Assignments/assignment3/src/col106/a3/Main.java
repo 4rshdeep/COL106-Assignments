@@ -1,37 +1,55 @@
-package col106.a3;
+//package col106.a3;
 
+// import col106.a3.StringFormatChecker;
+// import col106.a3.ta.TA_BTree;
+
+
+import java.util.LinkedList;
+import java.util.ListIterator;
 import java.util.Scanner;
 
 public class Main {
 
+    public static void main1(String[] a) {
+        LinkedList<Integer> l = new LinkedList<>();
+        for (int i = 0; i < 10; i++)
+            l.add(2 * i);
+        ListIterator<Integer> it = l.listIterator();
+        while (it.hasNext()) {
+            int t = it.next();
+            if (t > 5)
+                it.add(5);
+            System.out.println(t);
+        }
+        System.out.println(l);
+    }
 
     public static void main(String[] args) throws Exception {
         Scanner s = new Scanner(System.in);
-        System.out.println("B tree size");
         int n = s.nextInt();
-        // DuplicateBTree<String, String> tree = new BTree<>(n);
-        BTree<String, String> tree = new BTree<>(n);
+        BTree<Integer, Integer> tree = new BTree<>(n);
         while (true) {
             String command = s.next();
             try {
                 switch (command) {
                     case "exit":
                         System.exit(0);
-                    case "reset" :
-                        int nt = s.nextInt();
-                        tree = new BTree<>(nt);
-                        break; 
                     case "insert":
-                        tree.insert(s.next(), s.next());
-                        System.out.println(tree);
+                        tree.insert(s.nextInt(), s.nextInt());
                         break;
                     case "delete":
-                        tree.delete(s.next());
-                        System.out.println(tree);
+                        tree.delete(s.nextInt());
                         break;
                     case "print":
-                        System.out.println(tree);
+                        StringFormatChecker sf = new StringFormatChecker(tree.toString(), n);
+                        if (!sf.verify())
+                            System.out.println(sf.getMessage());
+                        else
+                            System.out.print("Verified:");
+                        System.out.println(sf.getArgument());
                         break;
+                    case "size":
+                        System.out.println(tree.size());
                     case "height":
                         System.out.println(tree.height());
                         break;
@@ -39,30 +57,11 @@ public class Main {
                         System.out.println(tree.isEmpty());
                         break;
                     case "search":
-                        System.out.println(tree.search(s.next()));
-                        break;
-                    case "print_num_keys":
-                        Node tempNode = tree.getRoot();
-                        System.out.println(tempNode.num_keys);
-                        break;
-                    case "size":
-                        System.out.println(tree.size());
-                        break;
-                    case "get":
-                        System.out.println(tree.getPredecessor(tree.getRoot(), s.nextInt()).key);
-                        break;
-                    case "gets":
-                        KeyValue k = tree.getSuccessor(tree.getRoot(), s.nextInt());
-                        System.out.println(k.key);
-                        System.out.println(k.value);
-                        break;
+                        System.out.println(tree.search(s.nextInt()));
                 }
             } catch (Exception e) {
                 System.out.println(e);
-                StackTraceElement[] elements = e.getStackTrace();  
-                for (int iterator=1; iterator<=elements.length; iterator++)  
-                System.out.println("Class Name:"+elements[iterator-1].getClassName()+" Method Name:"+elements[iterator-1].getMethodName()+" Line Number:"+elements[iterator-1].getLineNumber());
-            }   
+            }
         }
     }
 }

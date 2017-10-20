@@ -1,4 +1,4 @@
-package col106.a3;
+// package col106.a3;
 
 import java.util.List;
 import java.util.Vector;
@@ -300,7 +300,7 @@ public class BTree<Key extends Comparable<Key>,Value> implements DuplicateBTree<
 
 
     public void delete_key(Key key, Node node, int iter) {
-        System.out.println("At start: " + toString());
+        // System.out.println("At start: " + toString());
         int check = contains(key, node);
         int i = 0;
         int idx = 0;
@@ -311,7 +311,7 @@ public class BTree<Key extends Comparable<Key>,Value> implements DuplicateBTree<
         }
         if (check != -1) {
             if (node.isLeaf) {
-                System.out.println("leafy");
+                // System.out.println("leafy");
                 idx = check;
                 for (int j=idx; j<node.num_keys-1; j++) {
                     node.key[j]   = node.key[j+1];
@@ -322,10 +322,10 @@ public class BTree<Key extends Comparable<Key>,Value> implements DuplicateBTree<
                 return;
             }
             else {
-                System.out.println("internal");
+                // System.out.println("internal");
                 idx = check;
                 if (node.children[idx].num_keys > t-1) {
-                    System.out.println("getpred");
+                    // System.out.println("getpred");
                     k = getPredecessor(node, idx);
                     node.key[idx]    = k.key;
                     node.value[idx]  = k.value;
@@ -336,7 +336,7 @@ public class BTree<Key extends Comparable<Key>,Value> implements DuplicateBTree<
                 }
                 if (idx!=node.num_keys) {
                     if (node.children[idx+1].num_keys > t-1) {
-                        System.out.println("get succ");
+                        // System.out.println("get succ");
                         k = getSuccessor(node, idx);
                         node.key[idx]     = k.key;
                         node.value[idx]   = k.value;
@@ -346,7 +346,7 @@ public class BTree<Key extends Comparable<Key>,Value> implements DuplicateBTree<
                         return;
                     }
                 }
-                System.out.println("merge 'em");
+                // System.out.println("merge 'em");
                 int l = merge_down(node, idx);
                 delete_key(key, node.children[l], iter);
                 return;
@@ -355,17 +355,17 @@ public class BTree<Key extends Comparable<Key>,Value> implements DuplicateBTree<
         else {
             i = 0;
             while ((i<node.num_keys)&&(key.compareTo((Key)node.key[i])>0)) {
-                System.out.println("finding");
+                // System.out.println("finding");
                 i = i + 1;
             }
             
             // now we know key is in the ith subtree
             int keys = node.children[i].num_keys;
-            System.out.println("in the else");
+            // System.out.println("in the else");
             if (keys == t-1) {
                 if ((i!=0)) {
                     if ((node.children[i-1].num_keys > t-1)) {
-                        System.out.println("Filling from the previous");
+                        // System.out.println("Filling from the previous");
                         fill_from_prev(node, i);
                         delete_key(key, node.children[i], iter);
                          
@@ -375,14 +375,14 @@ public class BTree<Key extends Comparable<Key>,Value> implements DuplicateBTree<
                 if (i<node.num_keys) {
                     if (node.children[i+1].num_keys > t-1) {
                         fill_from_next(node, i);
-                        System.out.println("Filling from the next");
+                        // System.out.println("Filling from the next");
                         delete_key(key, node.children[i], iter);
                          
                         return;
                     }
                 }
                 //Todo check if merge works for i = 0 and n
-                System.out.println("Time to merge nodes");
+                // System.out.println("Time to merge nodes");
                 int j = merge_down(node, i);
                 delete_key(key, node.children[j], iter);
                 
