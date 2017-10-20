@@ -9,9 +9,9 @@ public class StressTest {
 
     public static void main(String argv[]) throws Exception {
         long startTime=System.currentTimeMillis();
-        DuplicateBTree<Integer, Integer> graph = new BTree<>(4);
+        BTree<Integer, Integer> graph = new BTree<>(4);
         int V = 1000;
-        int E = 10000;
+        int E = 100000;
         int cor = 0;
         int inc = 0;
         ArrayList<ArrayList<Integer>> g = new ArrayList<>(V);

@@ -36,17 +36,19 @@ public class Main {
                         System.exit(0);
                     case "insert":
                         tree.insert(s.nextInt(), s.nextInt());
+                        System.out.println(tree);
                         break;
                     case "delete":
                         tree.delete(s.nextInt());
                         break;
                     case "print":
-                        StringFormatChecker sf = new StringFormatChecker(tree.toString(), n);
-                        if (!sf.verify())
-                            System.out.println(sf.getMessage());
-                        else
-                            System.out.print("Verified:");
-                        System.out.println(sf.getArgument());
+                        // StringFormatChecker sf = new StringFormatChecker(tree.toString(), n);
+                        // if (!sf.verify())
+                        //     System.out.println(sf.getMessage());
+                        // else
+                        //     System.out.print("Verified:");
+                        // System.out.println(sf.getArgument());
+                    	System.out.println(tree);
                         break;
                     case "size":
                         System.out.println(tree.size());
