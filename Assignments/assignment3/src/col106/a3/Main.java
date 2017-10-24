@@ -30,7 +30,7 @@ public class Main {
 		BTree<Integer, Integer> tree = new BTree<>(n);
 		while (true) {
 			String command = s.next();
-			try {
+				
 				switch (command) {
 				case "exit":
 					System.exit(0);

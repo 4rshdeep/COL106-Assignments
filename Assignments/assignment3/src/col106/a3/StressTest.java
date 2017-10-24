@@ -10,7 +10,7 @@ public class StressTest {
 	public static void main(String argv[]) throws Exception {
 		long startTime = System.currentTimeMillis();
 		BTree<Integer, Integer> graph = new BTree<>(4);
-		int V = 1000;
+		int V = 10000;
 		int E = 100000;
 		int cor = 0;
 		int inc = 0;
@@ -42,15 +42,24 @@ public class StressTest {
 
 		}
 		System.out.println("insertion and search correct");
-		for (int i = 0; i < V; i++)
-			graph.delete(i);
+		try{
+			for (int i = 0; i < V; i++){
+				if (g.get(i).size()!=0) {
+					graph.delete(i);	
+				}
+			}
 
 		if (!graph.isEmpty()) {
 			System.out.println("deletion does not yield empty graph");
 			System.out.println(graph);
 		}
 		System.out.println("deletion correct");
-
+	
+		}
+		catch(Exception e) {
+			System.out.println(graph);
+		}
+		
 		long time = System.currentTimeMillis() - startTime;
 		// System.out.println(graph);
 		System.out.println("time: " + time + " millis");

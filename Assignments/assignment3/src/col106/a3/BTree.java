@@ -81,9 +81,6 @@ public class BTree<Key extends Comparable<Key>, Value> implements DuplicateBTree
 	/* return list can have null values */
 	public List<Value> getSearch(Key key, Node node) {
 		List<Value> list = new Vector<Value>();
-		// if (node == null) {
-		// 	return null;
-		// }
 		int i = 0;
 		int n = node.num_keys;
 		Key temp;
@@ -228,10 +225,14 @@ public class BTree<Key extends Comparable<Key>, Value> implements DuplicateBTree
 	@Override
 	public void delete(Key key) throws IllegalKeyException {
 		if ((root == null) || (root.num_keys == 0)) {
-			return;
+			throw new IllegalKeyException();
 		} else if (root.isLeaf) {
-			Node node = root;
 
+			if (contains(key, root)==-1) {
+				throw new IllegalKeyException();	
+			}
+
+			Node node = root;
 			int n = node.num_keys;
 			int i = 0;
 			int j = 0;
@@ -279,6 +280,9 @@ public class BTree<Key extends Comparable<Key>, Value> implements DuplicateBTree
 			return;
 		} else {
 			int k = search(key).size();
+			if (k==0) {
+				throw new IllegalKeyException();	
+			}
 			num_nodes = num_nodes - k;
 			delete_key(key, root, k);
 		}
@@ -286,7 +290,6 @@ public class BTree<Key extends Comparable<Key>, Value> implements DuplicateBTree
 
 
 	public void delete_key(Key key, Node node, int iter) {
-		// System.out.println("At start: " + toString());
 		int check = contains(key, node);
 		int i = 0;
 		int idx = 0;
