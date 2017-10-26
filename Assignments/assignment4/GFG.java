@@ -2,7 +2,7 @@ import java.util.*;
 public class GFG {
 
 
-    static List<String> getList(String str, String first) {
+    static List<String> split_in_three(String str, String first) {
         int len = str.length();
         List<String> list = new Vector<String>();
         int count = 0;
@@ -59,34 +59,7 @@ public class GFG {
             return;
         }
         int count;
-        list.addAll(getList(str, ""));
-        // int count = 0;
-        // // secondstr of length 3 and thirdstr of len-3
-        // for (int i=0; i<len-2; i++) {
-        //     secondStr.append(sbStr.charAt(i));
-        //     for (int j=i+1; j<len-1; j++) {
-        //         secondStr.append(sbStr.charAt(j));
-        //         for (int k=j+1; k<len; k++) {
-        //             secondStr.append(sbStr.charAt(k)); //Here I have a string of length 3
-        //             thirdStr.deleteCharAt(k);
-        //             thirdStr.deleteCharAt(j);    
-        //             thirdStr.deleteCharAt(i);
-        //             list.add(secondStr + "_" + thirdStr);
-        //             thirdStr = new StringBuilder(str);
-        //             secondStr.deleteCharAt(secondStr.length()-1);
-        //             count++;
-        //             if ((count==10)&&(len==6)) {
-        //                 System.out.println(list);
-        //                 System.out.println(list.size());
-        //                 return;
-        //             }
-        //         }
-        //         secondStr.deleteCharAt(secondStr.length()-1);
-        //     }
-            
-        //     secondStr.deleteCharAt(secondStr.length()-1);
-        // }
-        // System.out.println(list);
+        list.addAll(split_in_three(str, ""));
         if (len==7) {
             return;
         }
@@ -141,7 +114,7 @@ public class GFG {
                         thirdStr.deleteCharAt(k);
                         thirdStr.deleteCharAt(j);    
                         thirdStr.deleteCharAt(i);
-                        tList.addAll(getList(thirdStr.toString(), secondStr.toString()));
+                        tList.addAll(split_in_three(thirdStr.toString(), secondStr.toString()));
                         thirdStr = new StringBuilder(str);
                         secondStr.deleteCharAt(secondStr.length()-1);
                         count++;
