@@ -40,9 +40,9 @@ public class Anagram {
 	}
 
 	private static int[] PRIMES = new int[] { 2,  3,  5,  7,  11, 13, 17, 19, 23, 29, 31,
-	                                   37, 41, 43, 47, 53, 59, 61, 67, 71, 73, 79, 83, 89, 97, 101, 103,
-	                                   107, 109, 113, 127, 131, 137, 139, 149, 151, 157, 163, 167, 173, 179, 181, 191, 193, 197, 199
-	                                 };
+	        37, 41, 43, 47, 53, 59, 61, 67, 71, 73, 79, 83, 89, 97, 101, 103,
+	        107, 109, 113, 127, 131, 137, 139, 149, 151, 157, 163, 167, 173, 179, 181, 191, 193, 197, 199
+	                                        };
 
 	private static long calculate_hash(String str) {
 		long result = 1L;
@@ -62,7 +62,7 @@ public class Anagram {
 				// System.out.println(3);
 			}
 			result *= PRIMES[pos];
-			
+
 		}
 		return (result & 0x7fffffff) % num_buckets;
 	}
@@ -404,7 +404,7 @@ public class Anagram {
 
 
 	/* Utility function to sort String */
-	public static String sortString(String str) {
+	static String sortString(String str) {
 		// convert input string to char array
 		char tempArray[] = str.toCharArray();
 		// sort tempArray
@@ -413,13 +413,13 @@ public class Anagram {
 		return new String(tempArray);
 	}
 
-	public static Vector<String> get_anagram(String str) {
+	static Vector<String> get_anagram(String str) {
 		String sorted = sortString(str);
 		int bucket 	  = (int) calculate_hash(sorted);
 		Vector<String> vec = new Vector<String>();
 
 		Node tempNode = hashtable.table[bucket];
-		while(tempNode!=null) {
+		while (tempNode != null) {
 			if ((tempNode.sortedStr).equals(sorted)) {
 				vec.add(tempNode.str);
 			}
@@ -428,7 +428,7 @@ public class Anagram {
 		return vec;
 	}
 
-
+	
 	public static void main(String[] args) {
 		long startTime = System.currentTimeMillis();
 		Anagram a = new Anagram(15000);
@@ -438,8 +438,7 @@ public class Anagram {
 		File file = new File(args[1]);
 		try {
 			input = new Scanner(file);
-		}
-		catch (FileNotFoundException e1) {
+		} catch (FileNotFoundException e1) {
 			e1.printStackTrace();
 		}
 
@@ -449,46 +448,64 @@ public class Anagram {
 		String[] strArr;
 		int bucket;
 		Vector<String> vec = new Vector<String>();
+		Vector<String> v1 = new Vector<String>();
+		Vector<String> v2 = new Vector<String>();
+		Vector<String> v3 = new Vector<String>();
+
 		Node tempNode;
-		for (int i=0; i<count; i++) {
+		for (int i = 0; i < count; i++) {
 			str = input.nextLine();
 			// System.out.println("------"+str);
 			list 	= generate_strings(str);
 			// System.out.println(list.size());
 			for (ListIterator<String> iter = list.listIterator(); iter.hasNext(); ) {
-			    tempStr = iter.next();
+				tempStr = iter.next();
 				strArr  = tempStr.split("_");
-				if (strArr.length==1) {
+				if (strArr.length == 1) {
 					tempStr = strArr[0];
-					vec.addAll(get_anagram(tempStr));
+					// vec.addAll(get_anagram(tempStr));
 					// System.out.println(tempStr);
-					// sortedTempStr = sortString(tempStr);
-					// bucket 		  = (int) a.calculate_hash(sortedTempStr);
-					// // System.out.println(bucket);
-					// tempNode 	  = a.hashtable.table[bucket];
-					// // a.show_hashtable(bucket);
-					// while(tempNode!=null) {
-					// 	if ((tempNode.sortedStr).equals(sortedTempStr)) {
-					// 		vec.add(tempNode.str);
-					// 		// System.out.println(tempNode.str);
-					// 	}
-					// 	tempNode = tempNode.next;
-					// }
-				}
-				else if (strArr.length==2) {
+					sortedTempStr = sortString(tempStr);
+					bucket 		  = (int) a.calculate_hash(sortedTempStr);
+					// System.out.println(bucket);
+					tempNode 	  = a.hashtable.table[bucket];
+					// a.show_hashtable(bucket);
+					while(tempNode!=null) {
+						if ((tempNode.sortedStr).equals(sortedTempStr)) {
+							vec.add(tempNode.str);
+							// System.out.println(tempNode.str);
+						}
+						tempNode = tempNode.next;
+					}
+				} else if (strArr.length == 2) {
+					// System.out.print(strArr[0] + " ");
+					// System.out.println(strArr[1]);
+					v1 = get_anagram(strArr[0]);
+					v2 = get_anagram(strArr[1]);
+					String s1, s2; //todo try stringbuilder
+					for (ListIterator<String> iter1 = v1.listIterator(); iter1.hasNext(); ) {
+						s1 = iter1.next();
+						for (ListIterator<String> iter2 = v1.listIterator(); iter2.hasNext(); ) {
+							s2 = iter2.next();
+							if ((!s1.equals(strArr[0]))&&(!s2.equals(strArr[1]))) {
+								vec.add(s1+" " +s2);
+								vec.add(s2+" "+s1);
+							}
+						}						
+					}
+											
+
+				} else if (strArr.length == 3) {
 
 				}
-				else if (strArr.length==3) {
-
-				}
-				Collections.sort(vec);
-				vec.add("-1");
-				// System.out.println(vec);
-				for (ListIterator<String> iter1 = vec.listIterator(); iter1.hasNext(); ) {
-			    	System.out.println(iter1.next());
-				}
-				vec = new Vector<String>();
 			}
+			// Collections.sort(vec);
+			vec.add("-1");
+			// System.out.println(vec);
+			for (ListIterator<String> iter_ = vec.listIterator(); iter_.hasNext(); ) {
+				System.out.println(iter_.next());
+			}
+			vec = new Vector<String>();
 		}
 
 		long time = System.currentTimeMillis() - startTime;
