@@ -129,7 +129,6 @@ public class GFG {
         }
 
         List<String> tList = new Vector<String>();
-        List<Strings> t1List = new Vector<Strings>();
         if (len==9) {
             // break in 3 3 3
             count = 0;
@@ -142,121 +141,19 @@ public class GFG {
                         thirdStr.deleteCharAt(k);
                         thirdStr.deleteCharAt(j);    
                         thirdStr.deleteCharAt(i);
-                        tempList.addAll(getList(thirdStr.toString(), secondStr.toString()));
                         tList.addAll(getList(thirdStr.toString(), secondStr.toString()));
                         thirdStr = new StringBuilder(str);
                         secondStr.deleteCharAt(secondStr.length()-1);
                         count++;
-                        for (int z=0; z<tempList.size(); z++) {
-                            // System.out.print(count);
-                            // System.out.println(tempList.get(z));
-                        }
-
-                        tempList = new Vector<String>();  
                         
-                        if ((count==10)) {
-                            // System.out.println(list);
-                            // System.out.println(list.size());
-                            // return;
-                            System.out.println("--------------------------------------------");
-                        }
+                        tList = new Vector<String>();
                     }
                     secondStr.deleteCharAt(secondStr.length()-1);
                 }
-                
                 secondStr.deleteCharAt(secondStr.length()-1);
             }
-            // System.out.println(tList);
             System.out.println(count);
-            // System.out.println(tempList.get);
-            boolean found = true;
-            int index = 0;
-            System.out.println(tList.size());
-            String[] strArr;
-            Strings temp;
-            for (int i=0; i<280; i++) {
-                strArr = tList.get(i).split("_");
-                temp = new Strings(strArr[0], strArr[1], strArr[2]);
-                t1List.add(temp);
-            }
             
-            
-            for (int i=0; i<tList.size(); i++) {
-                System.out.println(String.valueOf(i) + " " + tList.get(i));
-            }
-
-            int duplicates = 0;
-            int idx = -1;
-            Strings strs;
-            String[] strArr2 =  new String[3];
-            for (int k=280; k<tList.size(); k++) {
-                strArr = (tList.get(k)).split("_");
-                for (int j=0; j<t1List.size(); j++) {
-                    strs = t1List.get(j);
-                    strArr2[0] = strs.str1; 
-                    strArr2[1] = strs.str2; 
-                    strArr2[2] = strs.str3; 
-                    idx = j;
-                    if ((strArr2[0].equals(strArr[0]))||(strArr2[1].equals(strArr[1]))||(strArr2[2].equals(strArr[2]))) {
-                        // System.out.println();
-                        // System.out.print(k);
-                    // System.out.print(" ");
-                    // System.out.println(tList.get(k) + " found at " + String.valueOf(idx) + tList.get(idx));
-                        found = true;
-                        duplicates++;
-                    }
-                    else if ((strArr2[0].equals(strArr[1]))||(strArr2[1].equals(strArr[2]))||(strArr2[2].equals(strArr[0]))) {
-                        // System.out.println();
-                        // System.out.print(k);
-                    // System.out.print(" ");
-                    // System.out.println(tList.get(k) + " found at " + String.valueOf(idx) + tList.get(idx));
-                    //     found = true;
-                        duplicates++;   
-                    }
-                    else if ((strArr2[0].equals(strArr[2]))||(strArr2[1].equals(strArr[0]))||(strArr2[2].equals(strArr[1]))) {
-                        // System.out.println();
-                        // System.out.print(k);
-                    // System.out.print(" ");
-                    // System.out.println(tList.get(k) + " found at " + String.valueOf(idx) + tList.get(idx));
-                        found = true;
-                        duplicates++;
-                    }
-                    else if ((strArr2[0].equals(strArr[1]))||(strArr2[1].equals(strArr[0]))||(strArr2[2].equals(strArr[2]))) {
-                        // System.out.println();
-                        // System.out.print(k);
-                    // System.out.print(" ");
-                    // System.out.println(tList.get(k) + " found at " + String.valueOf(idx) + tList.get(idx));
-                        found = true;
-                        duplicates++;
-                    }
-                    else if ((strArr2[0].equals(strArr[2]))||(strArr2[1].equals(strArr[1]))||(strArr2[2].equals(strArr[0]))) {
-                        // System.out.println();
-                        // System.out.print(k);
-                    // System.out.print(" ");
-                    // System.out.println(tList.get(k) + " found at " + String.valueOf(idx) + tList.get(idx));
-                        found = true;
-                        duplicates++;
-                    }
-                    else if ((strArr2[0].equals(strArr[0]))||(strArr2[1].equals(strArr[2]))||(strArr2[2].equals(strArr[1]))) {
-                        // System.out.println();
-                        // System.out.print(k);
-                    // System.out.print(" ");
-                    // System.out.println(tList.get(k) + " found at " + String.valueOf(idx) + tList.get(idx));
-                        found = true;
-                        duplicates++;
-                    }
-                    else{
-                        index = k;
-                        found = false;
-                        // System.out.println("false at");
-                        // System.out.println(tList.get(k) + " " + tList.get(j));
-                        // break;
-                    }                            
-                }
-            }
-            System.out.println(duplicates);
-            
-            System.out.println(found);
             return;
         }
 
