@@ -2,15 +2,16 @@ import java.util.*;
 public class GFG {
 
 
-    static List<String> split_in_three(String str, String first) {
+    static List<String> split_three(String str, String first) {
         int len = str.length();
         List<String> list = new Vector<String>();
+        StringBuilder secondStr = new StringBuilder();
+        StringBuilder thirdStr  = new StringBuilder(str);
+        StringBuilder sbStr     = new StringBuilder(str);
         int count = 0;
+
         // secondstr of length 3 and thirdstr of len-3
         for (int i=0; i<len-2; i++) {
-            StringBuilder secondStr = new StringBuilder();
-            StringBuilder thirdStr  = new StringBuilder(str);
-            StringBuilder sbStr     = new StringBuilder(str);
             secondStr.append(sbStr.charAt(i));
             for (int j=i+1; j<len-1; j++) {
                 secondStr.append(sbStr.charAt(j));
@@ -25,13 +26,10 @@ public class GFG {
                     else {
                         list.add(first + "_" + secondStr + "_" + thirdStr);    
                     }
-                    // System.out.println(secondStr + "_" + thirdStr);
                     thirdStr = new StringBuilder(str);
                     secondStr.deleteCharAt(secondStr.length()-1);
                     count++;
                     if ((count==10)&&(len==6)) {
-                        // System.out.println(list);
-                        // System.out.println(list.size());
                         return list;
                     }
                 }
@@ -42,30 +40,13 @@ public class GFG {
         return list;
     }
 
-    static void generate_strings(String str) {
-        StringBuilder firstStr  = new StringBuilder();
+    static List<String> split_four(String str, String first) {
+        int len = str.length();
+        List<String> list = new Vector<String>();
         StringBuilder secondStr = new StringBuilder();
         StringBuilder thirdStr  = new StringBuilder(str);
         StringBuilder sbStr     = new StringBuilder(str);
-        StringBuilder tempStr   = new StringBuilder();
-        List<String> list = new Vector<String>();
-        List<String> tempList = new Vector<String>();
-        int len = str.length();
-        if (len<3) {
-            return;
-        }
-        list.add(thirdStr+"_");
-        if ((len==3)||(len==4)||(len==5)) {
-            return;
-        }
-        int count;
-        list.addAll(split_in_three(str, ""));
-        if (len==7) {
-            return;
-        }
-
-        count = 0;
-        System.out.println("4 in first");
+        int count = 0;
         // 4 and len-4
         for (int i=0; i<len-3; i++) {
             secondStr.append(sbStr.charAt(i));
@@ -79,16 +60,21 @@ public class GFG {
                         thirdStr.deleteCharAt(k);
                         thirdStr.deleteCharAt(j);    
                         thirdStr.deleteCharAt(i);
-                        list.add(secondStr + "_" + thirdStr);
-                        thirdStr = new StringBuilder(str);
-                        secondStr.deleteCharAt(secondStr.length()-1);
                         count++;
+                        if (first.equals("")) {
+                            list.add(secondStr + "_" + thirdStr);    
+                        }
+                        else {
+                            list.add(first + "_" + secondStr + "_" + thirdStr);    
+                        }
                         if (count==35) {
                             if (len==8) {
                                 //repitions occur after this in case of same partitions
-                                return;
+                                return list;
                             }
                         }
+                        thirdStr = new StringBuilder(str);
+                        secondStr.deleteCharAt(secondStr.length()-1);
                     }
                     secondStr.deleteCharAt(secondStr.length()-1);
                 }
@@ -97,36 +83,136 @@ public class GFG {
             secondStr.deleteCharAt(secondStr.length()-1);
         }
 
-        if (len==8) {
+        return list;
+    }
+
+    static void generate_strings(String str) {
+        StringBuilder firstStr  = new StringBuilder();
+        StringBuilder secondStr = new StringBuilder();
+        StringBuilder thirdStr  = new StringBuilder(str);
+        StringBuilder sbStr     = new StringBuilder(str);
+        StringBuilder tempStr   = new StringBuilder();
+        List<String> list = new Vector<String>();
+        List<String> tempList = new Vector<String>();
+        List<String> fList = new Vector<String>();
+        int len = str.length();
+        if (len<3) {
+            return;
+        }
+        list.add(thirdStr+"_");
+        if ((len==3)||(len==4)||(len==5)) {
+            return;
+        }
+        int count = 0;
+        // secondstr of length 3 and thirdstr of len-3
+        for (int i=0; i<len-2; i++) {
+            secondStr.append(sbStr.charAt(i));
+            for (int j=i+1; j<len-1; j++) {
+                secondStr.append(sbStr.charAt(j));
+                for (int k=j+1; k<len; k++) {
+                    secondStr.append(sbStr.charAt(k)); //Here I have a string of length 3
+                    thirdStr.deleteCharAt(k);
+                    thirdStr.deleteCharAt(j);    
+                    thirdStr.deleteCharAt(i);
+                    list.add(secondStr + "_" + thirdStr);    
+                    count++;
+                    if ((count==10)&&(len==6)) {
+                        return;
+                    }
+                    else if (len==9) {
+                        list.addAll(split_three(thirdStr.toString(), secondStr.toString()));
+                    }
+                    else if (len==11) {
+                        // 3*4*4
+                        list.addAll(split_four(thirdStr.toString(), secondStr.toString()));
+                        // // 3*3*5 inefficient here add in 5 split
+                        // fList.addAll(split_three(thirdStr.toString(), secondStr.toString()));
+                    }
+                    thirdStr = new StringBuilder(str);
+                    secondStr.deleteCharAt(secondStr.length()-1);
+                }
+                secondStr.deleteCharAt(secondStr.length()-1);
+            }
+            secondStr.deleteCharAt(secondStr.length()-1);
+        }
+        // System.out.println(tempList.size());
+        // System.out.println(fList);
+                    
+        // System.out.println(list);
+        if (len==7) {
             return;
         }
 
-        List<String> tList = new Vector<String>();
-        if (len==9) {
-            // break in 3 3 3
-            count = 0;
-            for (int i=0; i<len-2; i++) {
-                secondStr.append(sbStr.charAt(i));
-                for (int j=i+1; j<len-1; j++) {
-                    secondStr.append(sbStr.charAt(j));
-                    for (int k=j+1; k<len; k++) {
-                        secondStr.append(sbStr.charAt(k)); //Here I have a string of length 3
+        count = 0;
+        // 4 and len-4
+        for (int i=0; i<len-3; i++) {
+            secondStr.append(sbStr.charAt(i));
+            for (int j=i+1; j<len-2; j++) {
+                secondStr.append(sbStr.charAt(j));
+                for (int k=j+1; k<len-1; k++) {
+                    secondStr.append(sbStr.charAt(k)); //Here I have a string of length 3
+                    for (int l=k+1; l<len; l++) {
+                        secondStr.append(sbStr.charAt(l));
+                        thirdStr.deleteCharAt(l);                   
                         thirdStr.deleteCharAt(k);
                         thirdStr.deleteCharAt(j);    
                         thirdStr.deleteCharAt(i);
-                        tList.addAll(split_in_three(thirdStr.toString(), secondStr.toString()));
+                        // thirdStr is of 6 chars here
+                        if (len==10) {
+                            list.addAll(split_three(thirdStr.toString(), secondStr.toString()));
+                        }
+                        else if (len==12) {
+                            tempList.addAll(split_four(thirdStr.toString(), secondStr.toString()));
+                        }
+                        count++;
+                        if (len==8) {
+                            if (count<=35) {
+                                list.add(secondStr + "_" + thirdStr);
+                            }
+                        }
+                        else {
+                            list.add(secondStr + "_" + thirdStr);
+                        }
                         thirdStr = new StringBuilder(str);
                         secondStr.deleteCharAt(secondStr.length()-1);
-                        count++;
-                        
-                        tList = new Vector<String>();
                     }
                     secondStr.deleteCharAt(secondStr.length()-1);
                 }
                 secondStr.deleteCharAt(secondStr.length()-1);
             }
-            System.out.println(count);
-            
+            secondStr.deleteCharAt(secondStr.length()-1);
+        }
+        // System.out.println(tempList);
+        // System.out.println(tempList.size());
+        if (len==8) {
+            return;
+        }
+
+        // List<String> tList = new Vector<String>();
+        if (len==9) {
+            // // should yield 9c3*6c3 combinations in total
+            // // break in 3 3 3
+            // count = 0;
+            // tempList = new Vector<String>();
+            // for (int i=0; i<len-2; i++) {
+            //     secondStr.append(sbStr.charAt(i));
+            //     for (int j=i+1; j<len-1; j++) {
+            //         secondStr.append(sbStr.charAt(j));
+            //         for (int k=j+1; k<len; k++) {
+            //             secondStr.append(sbStr.charAt(k)); //Here I have a string of length 3
+            //             thirdStr.deleteCharAt(k);
+            //             thirdStr.deleteCharAt(j);    
+            //             thirdStr.deleteCharAt(i);
+            //             tempList.addAll(split_three(thirdStr.toString(), secondStr.toString()));
+            //             thirdStr = new StringBuilder(str);
+            //             secondStr.deleteCharAt(secondStr.length()-1);
+            //             count++;
+            //         }
+            //         secondStr.deleteCharAt(secondStr.length()-1);
+            //     }
+            //     secondStr.deleteCharAt(secondStr.length()-1);
+            // }
+            // // System.out.println(tempList.size());
             return;
         }
 
@@ -147,16 +233,22 @@ public class GFG {
                             thirdStr.deleteCharAt(k);
                             thirdStr.deleteCharAt(j);    
                             thirdStr.deleteCharAt(i);
-                            list.add(secondStr + "_" + thirdStr);
-                            System.out.println(secondStr + "_" + thirdStr);
+                            // System.out.println(secondStr + "_" + thirdStr);
                             count++;
                             
                             // System.out.println(count); 
-                            if (count==126) {
-                                if (len==10) {
-                    // in case both partitions are equal after this we will have water image and mirror image
-                                    return;
+                            if (len==10) {
+                                if (count<=126) {
+                                // in case both partitions are equal after this we will have water image and mirror image
+                                    list.add(secondStr + "_" + thirdStr);
                                 }
+                            }
+                            else {
+                                list.add(secondStr + "_" + thirdStr);
+                            }
+                            if (len==11) {
+                                //5*3*3
+                                fList.addAll(split_three(thirdStr.toString(), secondStr.toString()));
                             }
 
                             thirdStr = new StringBuilder(str);
@@ -168,22 +260,25 @@ public class GFG {
                 }
                 secondStr.deleteCharAt(secondStr.length()-1);
             }
-            System.out.println("--"+secondStr);
             secondStr.deleteCharAt(secondStr.length()-1);
         }
+        // System.out.println(fList.size());
 
         if (len == 10) {
             //make one for 3 3 4
+
             return;
         }
 
         if (len == 11) {
+            // System.out.println(fList.size());
             //make one for 3 3 5 and one for 3 4 4
             return;
         }
 
         count = 0;
-        // 5 len-5
+        // 6 len-6
+        tempList = new Vector<String>();
         for (int i=0; i<len-5; i++) {
             secondStr.append(sbStr.charAt(i));
             for (int j=i+1; j<len-4; j++) {
@@ -202,17 +297,12 @@ public class GFG {
                                 thirdStr.deleteCharAt(k);
                                 thirdStr.deleteCharAt(j);    
                                 thirdStr.deleteCharAt(i);
-                                list.add(secondStr + "_" + thirdStr);
-                                System.out.println(secondStr + "_" + thirdStr);
+                                // System.out.println(secondStr + "_" + thirdStr);
                                 count++;
-                                // System.out.println(count); 
-                                if (count==462) {
+                                tempList.addAll(split_three(thirdStr.toString(), secondStr.toString()));
+                                if (count<=462) {
                                 // in case both partitions are equal after this we will have water image and mirror image
-                                    
-                                    if (len==12) {
-                                        // System.out.println("---------------------");
-                                        return;
-                                    }
+                                    list.add(secondStr + "_" + thirdStr);
                                 }
                                 thirdStr = new StringBuilder(str);
                                 secondStr.deleteCharAt(secondStr.length()-1);
@@ -225,10 +315,12 @@ public class GFG {
                 }
                 secondStr.deleteCharAt(secondStr.length()-1);
             }
-            System.out.println("--"+secondStr);
+            // System.out.println("--"+secondStr);
             secondStr.deleteCharAt(secondStr.length()-1);
         }
-        System.out.println(count);
+        // System.out.println(tempList);
+        return;
+        
 
         // make one for 3,3,6  3,4,5  4,4,4
     }
@@ -249,7 +341,7 @@ public class GFG {
     public static void main(String[] args) {
         long startTime = System.currentTimeMillis();
         Scanner input = new Scanner(System.in);
-        generate_strings("abcdefghi");
+        generate_strings("abcdefghijkl");
         long time = System.currentTimeMillis() - startTime;
         System.out.println("time: " + time + " millis");
     }
