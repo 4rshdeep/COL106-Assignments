@@ -7,7 +7,6 @@ public class Anagram {
 		num_buckets = a;
 	}
 
-
 	long hash(String s) {
 		return sfold(s, num_buckets);
 	}
