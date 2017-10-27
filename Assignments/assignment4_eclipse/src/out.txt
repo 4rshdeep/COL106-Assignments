@@ -1,6 +1,287 @@
-gist
-gsit
-isgt
-sigt
+9th ababa
+ababa 9th
 -1
-time: 105 millis
+men karp
+pram ken
+kern amp
+ken pram
+map kern
+kern pam
+kern map
+rpm kane
+pam kern
+kemp rna
+pen mark
+kemp ran
+kane rpm
+ran kemp
+men park
+rna kemp
+karp men
+ramp ken
+park men
+man perk
+perk man
+ken ramp
+amp kern
+mark pen
+-1
+-1
+shah irk
+irk hash
+hark his
+his hark
+irk shah
+hash irk
+-1
+spear
+parse
+spare
+-1
+slater
+sal ret
+ret sal
+-1
+stale
+steal
+least
+slate
+-1
+aster
+stare
+-1
+-1
+hare des
+sad here
+des hera
+des hare
+she read
+des hear
+rhea des
+hear des
+shea red
+hard see
+here sad
+see hard
+ash reed
+erda she
+read she
+sea herd
+red shea
+she dear
+she dare
+dare she
+era shed
+des rhea
+she erda
+hera des
+rash dee
+dear she
+rae shed
+ear shed
+are shed
+reed ash
+ere shad
+shed rae
+ash deer
+shed era
+shed are
+ere dash
+dash ere
+shed ear
+shad ere
+herd sea
+dee rash
+deer ash
+-1
+sin tin
+sin nit
+inn sit
+sit inn
+nit sin
+tin sin
+-1
+aba hand
+hand aba
+dana bah
+bah dana
+-1
+pus her
+rep shu
+per shu
+shu rep
+shu per
+her sup
+her pus
+sup her
+-1
+kin ama
+kim ana
+ama kin
+ama ink
+ana kim
+ink ama
+-1
+hun ames
+hue mans
+hun same
+same hun
+han muse
+mans hue
+hum sane
+seam hun
+muse han
+mane shu
+hem anus
+hun seam
+sane hum
+menu ash
+mesa hun
+usn ahem
+amen shu
+ash menu
+sun ahem
+shu name
+shu mane
+shu mean
+shun mae
+ames hun
+anus hem
+mae shun
+hum sean
+shu amen
+name shu
+ahem sun
+hun mesa
+ahem usn
+mean shu
+sean hum
+-1
+-1
+hit aba
+aba hit
+-1
+-1
+hick dead
+dade hick
+hack died
+dead hick
+died hack
+dick head
+head dick
+hick dade
+-1
+spine
+penis
+snipe
+-1
+act cat
+cat act
+act act
+cat cat
+-1
+rhea sped
+per shade
+heed spar
+sped rhea
+deep rash
+heed rasp
+peer dash
+she drape
+hare sped
+red shape
+shade rep
+shade per
+her spade
+spar heed
+she padre
+rash peed
+red phase
+shape red
+shred pea
+dar sheep
+drape she
+shed reap
+hasp deer
+rape shed
+peed rash
+pear shed
+peer shad
+pea shred
+erase phd
+rep hades
+hades rep
+hades per
+shred epa
+shred ape
+spree had
+rep shade
+shard pee
+pad sheer
+seed harp
+seder hap
+apse herd
+harp seed
+dee sharp
+phd erase
+hap seder
+padre she
+hear sped
+hard seep
+seep hard
+reap shed
+hera sped
+dash peer
+reed hasp
+shad peer
+spade her
+phase red
+rash deep
+pare shed
+deer hasp
+sheer pad
+herd apse
+sheep dar
+had spree
+epa shred
+pee shard
+ape shred
+per hades
+sharp dee
+shed pare
+rasp heed
+shed rape
+shed pear
+sped hear
+hasp reed
+sped hera
+sped hare
+-1
+mush anna
+manna shu
+sum hanna
+anna mush
+san human
+shun mana
+mana shun
+shu manna
+hanna sum
+annum ash
+ash annum
+human san
+-1
+-1
+ursa bah
+arab shu
+rub haas
+sara hub
+bah ursa
+shu arab
+rasa hub
+aba rush
+haas rub
+rush aba
+hub sara
+hub rasa
+-1
+time: 153 millis
