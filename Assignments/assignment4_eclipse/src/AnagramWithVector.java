@@ -3,11 +3,11 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.Arrays;
 
-public class Anagram {
+public class AnagramWithVector {
 	static int num_buckets;
 	static Hashtable hashtable;
 
-	public Anagram(int a) {
+	public AnagramWithVector(int a) {
 		num_buckets = a;
 		hashtable = new Hashtable(a);
 	}
@@ -52,6 +52,7 @@ public class Anagram {
 			// System.out.println(c);
 			if (c == 39) {
 				pos = 37;
+				// System.out.println("yes it is a " + c);
 				// System.out.println(1);
 			} else if (c < 97) {
 				// System.out.println(c);
@@ -71,45 +72,53 @@ public class Anagram {
 	/* Loads dictionary into the hashtable */
 	static void load(String str) {
 		try {
-			File file = new File(str);
+			File file  = new File(str);
 			Scanner in = new Scanner(file);
+			int count  = in.nextInt();
+			Node tempNode;
+			Vector<Node> tempVec;
 			int bucket;
 			String nextStr;
 			String sorted;
-			int count = in.nextInt();
 			for (int i = 0; i < count; i++) {
-				nextStr = in.nextLine();
-				sorted  = sortString(nextStr);
-				bucket = (int) calculate_hash(sorted);
-				if (hashtable.table[bucket] == null) {
-					hashtable.table[bucket] = new Node(nextStr, sorted);
-				} else {
-					hashtable.table[bucket] = new Node(hashtable.table[bucket], nextStr, sorted);
+				nextStr    = in.nextLine();
+				sorted     = sortString(nextStr);
+				tempNode   = new Node(nextStr, sorted);
+				bucket     = (int) calculate_hash(sorted);
+				// System.out.println(hashtable.table.capacity());;
+				// System.out.println(bucket);
+//				System.out.println(hashtable.table.length);
+				if(hashtable.table[bucket]==null) {
+					hashtable.table[bucket] = new Vector<Node>();
 				}
+				hashtable.table[bucket].add(tempNode);	
+				// tempVec.add();
 			}
-			Node tempNode;
 			// max elements hashed to a particular bucket is 11 which can further be decreased by increasing num_b
+			int idx = 0;
 			for (int i = 0; i < num_buckets; i++) {
-				tempNode = hashtable.table[i];
+				tempVec = hashtable.table[i];
 				// System.out.println("here");
-				// System.out.print(i + ": ");
-				while (tempNode != null) {
-					// System.out.print(tempNode.str + "(" + tempNode.sortedStr + ") ");
-					tempNode = tempNode.next;
+				for (ListIterator<Node> iter = tempVec.listIterator(); iter.hasNext(); ) {
+				    Node element = iter.next();
+//				    System.out.println(idx +": ");
+//				    System.out.println(element.str);
+				    idx++;
 				}
-				// System.out.println();
 			}
-		} catch (FileNotFoundException e) {
+		} 
+		catch (FileNotFoundException e) {
 			e.printStackTrace();
 		}
 	}
 
 	static void show_hashtable(int idx) {
-		Node tempNode = hashtable.table[idx];
 		System.out.print(String.valueOf(idx) + ": ");
-		while (tempNode != null) {
-			System.out.print(tempNode.str + "(" + tempNode.sortedStr + ") ");
-			tempNode = tempNode.next;
+		
+		Vector<Node> tempVec         = hashtable.table[idx];
+		for (ListIterator<Node> iter = tempVec.listIterator(); iter.hasNext(); ) {
+		Node element                 = iter.next();
+		    System.out.println(element.str + "(" + element.sortedStr + ") ");
 		}
 		System.out.println();
 	}
@@ -117,15 +126,15 @@ public class Anagram {
 	/* Checks whether string is present in the hashtable */
 	static boolean contains(String s) {
 		int h = (int) hash(s);
-		Node tempNode = hashtable.table[h];
-		if (tempNode == null) {
+		Vector<Node> tempVec = hashtable.table[h];
+		if (tempVec == null) {
 			return false;
 		} else {
-			while (tempNode != null) {
-				if ((tempNode.str).equals(s)) {
+			for (ListIterator<Node> iter = tempVec.listIterator(); iter.hasNext(); ) {
+			    Node element = iter.next();
+			    if ((element.str).equals(s)) {
 					return true;
 				}
-				tempNode = tempNode.next;
 			}
 			return false;
 		}
@@ -215,17 +224,14 @@ public class Anagram {
 	}
 
 	static List<String> generate_strings(String str) {
-		StringBuilder firstStr  = new StringBuilder();
 		StringBuilder secondStr = new StringBuilder();
 		StringBuilder thirdStr  = new StringBuilder(str);
 		StringBuilder sbStr     = new StringBuilder(str);
-		StringBuilder tempStr   = new StringBuilder();
 		List<String> list       = new Vector<String>();
 		List<String> tempList   = new Vector<String>();
-		List<String> fList      = new Vector<String>();
 		int len = str.length();
 
-		if ((len < 3)||(len>12)) {
+		if (len < 3) {
 			return list;
 		}
 		list.add(thirdStr + "_");
@@ -417,138 +423,125 @@ public class Anagram {
 		String sorted = sortString(str);
 		int bucket 	  = (int) calculate_hash(sorted);
 		Vector<String> vec = new Vector<String>();
-
-		Node tempNode = hashtable.table[bucket];
-		while (tempNode != null) {
-			if ((tempNode.sortedStr).equals(sorted)) {
-				vec.add(tempNode.str);
+		Vector<Node> tempVec = hashtable.table[bucket];
+	
+		for (ListIterator<Node> iter = tempVec.listIterator(); iter.hasNext(); ) {
+		    Node element = iter.next();
+		    if ((element.sortedStr).equals(sorted)) {
+				vec.add(element.str);
 			}
-			tempNode = tempNode.next;
 		}
 		return vec;
 	}
 
-
+	
 	public static void main(String[] args) {
 		long startTime = System.currentTimeMillis();
-		Anagram a = new Anagram(15000);
-		a.load(args[0]);
+		AnagramWithVector a = new AnagramWithVector(500);
+		//load(args[0]);
+		load("vocabulary.txt");
+		// Scanner input = null;
+		// File file = new File(args[1]);
+		// try {
+		// 	input = new Scanner(file);
+		// } catch (FileNotFoundException e1) {
+		// 	e1.printStackTrace();
+		// }
 
-		Scanner input = null;
-		File file = new File(args[1]);
-		try {
-			input = new Scanner(file);
-		} catch (FileNotFoundException e1) {
-			e1.printStackTrace();
-		}
 
-		int count = Integer.parseInt(input.nextLine());
-		List<String> list;
-		String str, tempStr, sortedTempStr;
-		String[] strArr;
-		int bucket;
-		Vector<String> vec = new Vector<String>();
-		Vector<String> v1 = new Vector<String>();
-		Vector<String> v2 = new Vector<String>();
-		Vector<String> v3 = new Vector<String>();
+		// int count = Integer.parseInt(input.nextLine());
+		// List<String> list;
+		// String str, tempStr, sortedTempStr;
+		// String[] strArr;
+		// int bucket;
+		// Vector<String> vec = new Vector<String>();
+		// Vector<String> v1 = new Vector<String>();
+		// Vector<String> v2 = new Vector<String>();
+		// Vector<String> v3 = new Vector<String>();
 
-		Node tempNode;
-		for (int i = 0; i < count; i++) {
-			str = input.nextLine();
-			// System.out.println("------"+str);
-			list 	= generate_strings(str);
-			// System.out.println(list.size());
-			for (ListIterator<String> iter = list.listIterator(); iter.hasNext(); ) {
-				tempStr = iter.next();
-				strArr  = tempStr.split("_");
-				if (strArr.length == 1) {
-					tempStr = strArr[0];
-					// vec.addAll(get_anagram(tempStr));
-					// System.out.println(tempStr);
-					sortedTempStr = sortString(tempStr);
-					bucket 		  = (int) a.calculate_hash(sortedTempStr);
-					// System.out.println(bucket);
-					tempNode 	  = a.hashtable.table[bucket];
-					// a.show_hashtable(bucket);
-					while (tempNode != null) {
-						if ((tempNode.sortedStr).equals(sortedTempStr)) {
-							vec.add(tempNode.str);
-							// System.out.println(tempNode.str);
-						}
-						tempNode = tempNode.next;
-					}
-				} else if (strArr.length == 2) {
-					// System.out.print(strArr[0] + " ");
-					// System.out.println(strArr[1]);
-					v1 = get_anagram(strArr[0]);
-					v2 = get_anagram(strArr[1]);
-					// System.out.println("{"+strArr[0] + ","+strArr[1]+"}");
-					String s1, s2; //todo try stringbuilder
-					for (ListIterator<String> iter1 = v1.listIterator(); iter1.hasNext(); ) {
-						s1 = iter1.next();
-						for (ListIterator<String> iter2 = v2.listIterator(); iter2.hasNext(); ) {
-							s2 = iter2.next();
-							vec.add(s1 + " " + s2);
-							if (!s1.equals(s2)) {
-								vec.add(s2 + " " + s1);
-							}
-						}
-					}
-				} else if (strArr.length == 3) {
-					v1 = get_anagram(strArr[0]);
-					v2 = get_anagram(strArr[1]);
-					v3 = get_anagram(strArr[2]);
-					String s1, s2, s3;
-					for (ListIterator<String> iter1 = v1.listIterator(); iter1.hasNext(); ) {
-						s1 = iter1.next();
-						for (ListIterator<String> iter2 = v2.listIterator(); iter2.hasNext(); ) {
-							s2 = iter2.next();
-							for (ListIterator<String> iter3 = v3.listIterator(); iter3.hasNext(); ) {
-								s3 = iter3.next();
+		// Node tempNode;
+		// for (int i = 0; i < count; i++) {
+		// 	str = input.nextLine();
+		// 	// System.out.println("------"+str);
+		// 	// System.out.println("("+str+")");
+		// 	list 	= generate_strings(str);
+		// 	// System.out.println(list.size());
+		// 	for (ListIterator<String> iter = list.listIterator(); iter.hasNext(); ) {
+		// 		tempStr = iter.next();
+		// 		strArr  = tempStr.split("_");
+		// 		if (strArr.length == 1) {
+		// 			tempStr = strArr[0];
+		// 			// vec.addAll(get_anagram(tempStr));
+		// 			// System.out.println(tempStr);
+		// 			sortedTempStr = sortString(tempStr);
+		// 			bucket 		  = (int) a.calculate_hash(sortedTempStr);
+		// 			// System.out.println(bucket);
+		// 			tempNode 	  = a.hashtable.table[bucket];
+		// 			// a.show_hashtable(bucket);
+		// 			while(tempNode!=null) {
+		// 				if ((tempNode.sortedStr).equals(sortedTempStr)) {
+		// 					vec.add(tempNode.str);
+		// 					// System.out.println(tempNode.str);
+		// 				}
+		// 				tempNode = tempNode.next;
+		// 			}
+		// 		} 
+		// 		else if (strArr.length == 2) {
+		// 			// System.out.print(strArr[0] + " ");
+		// 			// System.out.println(strArr[1]);
+		// 			v1 = get_anagram(strArr[0]);
+		// 			v2 = get_anagram(strArr[1]);
+		// 			// System.out.println("{"+strArr[0] + ","+strArr[1]+"}");
+		// 			String s1, s2; //todo try stringbuilder
+		// 			for (ListIterator<String> iter1 = v1.listIterator(); iter1.hasNext(); ) {
+		// 				s1 = iter1.next();
+		// 				for (ListIterator<String> iter2 = v2.listIterator(); iter2.hasNext(); ) {
+		// 					s2 = iter2.next();
+		// 					vec.add(s1+" " +s2);
+		// 					if (!s1.equals(s2)) {
+		// 						vec.add(s2+" "+s1);	
+		// 					}					
+		// 				}	
+		// 			}
+		// 		} 
+		// 		else if (strArr.length == 3) {
+		// 			v1 = get_anagram(strArr[0]);
+		// 			v2 = get_anagram(strArr[1]);
+		// 			v3 = get_anagram(strArr[2]);
+		// 			String s1, s2, s3;
+		// 			for (ListIterator<String> iter1 = v1.listIterator(); iter1.hasNext(); ) {
+		// 				s1 = iter1.next();
+		// 				for (ListIterator<String> iter2 = v2.listIterator(); iter2.hasNext(); ) {
+		// 					s2 = iter2.next();
+		// 					for (ListIterator<String> iter3 = v3.listIterator(); iter3.hasNext(); ) {
+		// 						s3 = iter3.next();
+		// 						vec.add(s1+" "+s2 +" "+ s3);
+		// 						vec.add(s1+" "+s3 +" "+ s2);
+		// 						vec.add(s3+" "+s1 +" "+ s2);
+		// 						if (!s1.equals(s2)) {
+		// 							vec.add(s3+" "+s2 +" "+ s1);
+		// 							vec.add(s2+" "+s1 +" "+ s3);	
+		// 						};
+		// 						vec.add(s2+" "+s3 +" "+ s1);
 
-								if ((s1.equals(s2)) && (!s2.equals(s3)) && (!s1.equals(s3))) {
-									vec.add(s1 + " " + s2 + " " + s3);
-									vec.add(s2 + " " + s3 + " " + s1);
-									vec.add(s3 + " " + s1 + " " + s2);
-								} else if ((s2.equals(s3)) && (!s1.equals(s3)) && (!s2.equals(s1))) {
-									vec.add(s1 + " " + s2 + " " + s3);
-									vec.add(s2 + " " + s3 + " " + s1);
-									vec.add(s3 + " " + s1 + " " + s2);
-								} else if ((s1.equals(s3)) && (!s2.equals(s3)) && (!s2.equals(s1))) {
-									vec.add(s1 + " " + s2 + " " + s3);
-									vec.add(s2 + " " + s3 + " " + s1);
-									vec.add(s3 + " " + s1 + " " + s2);
-								} else if ((!(s1.equals(s3)) && (!s2.equals(s3)) && (!s2.equals(s1)))) {
-									vec.add(s1 + " " + s2 + " " + s3);
-									vec.add(s2 + " " + s3 + " " + s1);
-									vec.add(s3 + " " + s1 + " " + s2);
-									vec.add(s2 + " " + s1 + " " + s3);
-									vec.add(s1 + " " + s3 + " " + s2);
-									vec.add(s3 + " " + s2 + " " + s1);
-								} else if (((s1.equals(s3)) && (s2.equals(s3)) && (s2.equals(s1)))) {
-									vec.add(s3 + " " + s2 + " " + s1);
-								}
-								else {
-									System.out.println("you should not be here");
-								}
-							}
-						}
-					}
+		// 					}	
+		// 				}	
+		// 			}	
 
-				}
-			}
-			// Collections.sort(vec);
-			Set<String> set = new HashSet<String>();
-			set.addAll(vec);
-			vec.clear();
-			vec.addAll(set);
-			vec.add("-1");
-			// System.out.println(vec);
-				for (ListIterator<String> iter_ = vec.listIterator(); iter_.hasNext(); ) {
-				System.out.println(iter_.next());
-			}
-			vec = new Vector<String>();
-		}
+		// 		}
+		// 	}
+		// 	// Collections.sort(vec);
+		// 	Set<String> set = new HashSet<String>();
+		// 	set.addAll(vec);
+		// 	vec.clear();
+		// 	vec.addAll(set);
+		// 	vec.add("-1");
+		// 	// System.out.println(vec);
+		// 	for (ListIterator<String> iter_ = vec.listIterator(); iter_.hasNext(); ) {
+		// 		System.out.println(iter_.next());
+		// 	}
+		// 	vec = new Vector<String>();
+		// }
 
 		long time = System.currentTimeMillis() - startTime;
 		System.out.println("time: " + time + " millis");
@@ -556,25 +549,33 @@ public class Anagram {
 }
 
 class Node {
-	Node next;
+	// Node next;
 	String str;
 	String sortedStr;
 
-	Node(String s, String sorted) {
-		this(null, s, sorted);
-	}
+	// Node(String s, String sorted) {
+	// 	this(null, s, sorted);
+	// }
 
-	Node(Node node, String s, String sorted) {
+	Node(String s, String sorted) {
 		this.str 	= s;
 		this.sortedStr = sorted;
-		this.next 	= node;
+		// this.next 	= node;
 	}
 }
 
 class Hashtable {
-	Node[] table;
+//	Vector<Vector<Node>> table;
+	Vector<Node>[] table;
 	Hashtable(int n) {
-		table = new Node[n];
+		
+		@SuppressWarnings("unchecked")
+		Vector<Node>[] anArray = (Vector<Node>[]) new Vector[n];
+		table = anArray;
+		
+		// for (int i=0; i<n; i++) {
+		// 	table.add(new Vector<Node>());
+		// }
 	}
 }
 
