@@ -26,7 +26,11 @@ public class Anagram {
 			if (c == 39) {
 				pos = 37;
 				// System.out.println(1);
-			} else if (c < 97) {
+			} 
+			else if(c == 32) {
+				continue;
+			}
+			else if (c < 97) {
 				// System.out.println(c);
 				pos = c - 22;
 				// System.out.println(2);
@@ -34,7 +38,12 @@ public class Anagram {
 				pos = c - 97;
 				// System.out.println(3);
 			}
-			result *= PRIMES[pos];
+			try{
+				result *= PRIMES[pos];
+			}
+			catch (Exception e) {
+				System.out.println(c);
+			}
 
 		}
 		return (result & 0x7fffffff) % num_buckets;
@@ -229,7 +238,7 @@ public class Anagram {
 		List<String> tempList   = new Vector<String>();
 		int len = str.length();
 
-		if ((len < 3)||(len>12)) {
+		if ((len < 3)) {
 			return list;
 		}
 		list.add(thirdStr + "_");
@@ -415,6 +424,7 @@ public class Anagram {
 		// convert input string to char array
 		char tempArray[] = str.toCharArray();
 		// sort tempArray
+
 		Arrays.sort(tempArray);
 		// return new sorted string
 		return new String(tempArray);
@@ -447,8 +457,7 @@ public class Anagram {
 		try {
 			Path path = Paths.get(args[1]);
 			InputStream in = null;
-			
-				in = Files.newInputStream(path);
+			in = Files.newInputStream(path);
 			
 			BufferedReader reader = new BufferedReader(new InputStreamReader(in));
 			
@@ -466,6 +475,7 @@ public class Anagram {
 			String tempString;
 			for (int i = 0; i < count; i++) {
 				str = reader.readLine();
+				str = str.replaceAll("\\s","");
 				if (str.length()>12) {
 					continue;
 				}
