@@ -1,5 +1,6 @@
 import java.io.*;
 import java.util.*;
+import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -13,37 +14,8 @@ public class Anagram {
 		hashtable = new Hashtable(a);
 	}
 
-	/* computes hash using the sfold method */
-	static long hash(String s) {
-		return sfold(s, num_buckets);
-	}
-
-	// Use folding on a string, summed 4 bytes at a time
-	// taken from http://research.cs.vt.edu/AVresearch/hashing/strings.php
-	static long sfold(String s, int M) {
-		int intLength = s.length() / 4;
-		long sum = 0;
-		for (int j = 0; j < intLength; j++) {
-			char c[] = s.substring(j * 4, (j * 4) + 4).toCharArray();
-			long mult = 1;
-			for (int k = 0; k < c.length; k++) {
-				sum += c[k] * mult;
-				mult *= 256;
-			}
-		}
-		char c[] = s.substring(intLength * 4).toCharArray();
-		long mult = 1;
-		for (int k = 0; k < c.length; k++) {
-			sum += c[k] * mult;
-			mult *= 256;
-		}
-		return ((sum & 0x7fffffff) % M); //  ((code & 0x7fffffff) % M) use instead
-	}
-
-	private static int[] PRIMES = new int[] { 2,  3,  5,  7,  11, 13, 17, 19, 23, 29, 31,
-	        37, 41, 43, 47, 53, 59, 61, 67, 71, 73, 79, 83, 89, 97, 101, 103,
-	        107, 109, 113, 127, 131, 137, 139, 149, 151, 157, 163, 167, 173, 179, 181, 191, 193, 197, 199
-	                                        };
+	private static int[] PRIMES = new int[] { 2,  3,  5,  7,  11, 13, 17, 19, 23, 29, 31, 37, 41, 43, 47, 53, 59, 61, 67, 71, 73, 79, 83, 89, 97, 101, 103,
+	        107, 109, 113, 127, 131, 137, 139, 149, 151, 157, 163, 167, 173, 179, 181, 191, 193, 197, 199};
 
 	private static long calculate_hash(String str) {
 		long result = 1L;
@@ -125,22 +97,7 @@ public class Anagram {
 	// 	System.out.println();
 	// }
 
-	/* Checks whether string is present in the hashtable */
-	static boolean contains(String s) {
-		int h = (int) hash(s);
-		Node tempNode = hashtable.table[h];
-		if (tempNode == null) {
-			return false;
-		} else {
-			while (tempNode != null) {
-				if ((tempNode.str).equals(s)) {
-					return true;
-				}
-				tempNode = tempNode.next;
-			}
-			return false;
-		}
-	}
+	
 
 	/* breaks str into 3*3 and returns a List after concatenating first+3*3 */
 	static List<String> split_three_and_three(String str, String first) {
@@ -172,6 +129,45 @@ public class Anagram {
 					if ((count == 10) && (len == 6)) {
 						return list;
 					}
+				}
+				secondStr.deleteCharAt(secondStr.length() - 1);
+			}
+			secondStr.deleteCharAt(secondStr.length() - 1);
+		}
+		return list;
+	}
+
+	/*break into 4 and 5*/
+	static List<String> split_four_and_five(String str, String first) {
+		int len = str.length();
+		List<String> list       = new Vector<String>();
+		StringBuilder secondStr = new StringBuilder();
+		StringBuilder thirdStr  = new StringBuilder(str);
+		StringBuilder sbStr     = new StringBuilder(str);
+		int count = 0;
+		// 4 and len-4
+		for (int i = 0; i < len - 3; i++) {
+			secondStr.append(sbStr.charAt(i));
+			for (int j = i + 1; j < len - 2; j++) {
+				secondStr.append(sbStr.charAt(j));
+				for (int k = j + 1; k < len - 1; k++) {
+					secondStr.append(sbStr.charAt(k)); //Here I have a string of length 3
+					for (int l = k + 1; l < len; l++) {
+						secondStr.append(sbStr.charAt(l));
+						thirdStr.deleteCharAt(l);
+						thirdStr.deleteCharAt(k);
+						thirdStr.deleteCharAt(j);
+						thirdStr.deleteCharAt(i);
+						count++;
+						if (first.equals("")) {
+							list.add(secondStr + "_" + thirdStr);
+						} else {
+							list.add(first + "_" + secondStr + "_" + thirdStr);
+						}
+						thirdStr = new StringBuilder(str);
+						secondStr.deleteCharAt(secondStr.length() - 1);
+					}
+					secondStr.deleteCharAt(secondStr.length() - 1);
 				}
 				secondStr.deleteCharAt(secondStr.length() - 1);
 			}
@@ -261,6 +257,9 @@ public class Anagram {
 					} else if (len == 11) {
 						// 3*4*4
 						list.addAll(split_four_and_four(thirdStr.toString(), secondStr.toString()));
+					}
+					else if (len==12) {
+						list.addAll(split_four_and_five(thirdStr.toString(), secondStr.toString()));
 					}
 					thirdStr = new StringBuilder(str);
 					secondStr.deleteCharAt(secondStr.length() - 1);
@@ -389,7 +388,7 @@ public class Anagram {
 								thirdStr.deleteCharAt(j);
 								thirdStr.deleteCharAt(i);
 								count++;
-								tempList.addAll(split_three_and_three(thirdStr.toString(), secondStr.toString()));
+								list.addAll(split_three_and_three(thirdStr.toString(), secondStr.toString()));
 								if (count <= 462) {
 									// in case both partitions are equal after this we will have water image and mirror image
 									list.add(secondStr + "_" + thirdStr);
@@ -442,13 +441,9 @@ public class Anagram {
 		Anagram a = new Anagram(15000);
 		load(args[0]);
 
-//		Scanner input = null;
-//		File file = new File(args[1]);
-//		try {
-//			input = new Scanner(file);
-//		} catch (FileNotFoundException e1) {
-//			e1.printStackTrace();
-//		}
+		BufferedOutputStream bout = new BufferedOutputStream(System.out);//TODO
+		PrintWriter p = new PrintWriter(bout);
+		
 		try {
 			Path path = Paths.get(args[1]);
 			InputStream in = null;
@@ -468,8 +463,12 @@ public class Anagram {
 			Vector<String> v3 = new Vector<String>();
 	
 			Node tempNode;
+			String tempString;
 			for (int i = 0; i < count; i++) {
 				str = reader.readLine();
+				if (str.length()>12) {
+					continue;
+				}
 				list = generate_strings(str);
 				for (ListIterator<String> iter = list.listIterator(); iter.hasNext(); ) {
 					tempStr = iter.next();
@@ -546,18 +545,19 @@ public class Anagram {
 				set.addAll(vec);
 				vec.clear();
 				vec.addAll(set);
-				vec.add("-1");
 				Collections.sort(vec);
 				for (ListIterator<String> iter_ = vec.listIterator(); iter_.hasNext(); ) {
-					System.out.println(iter_.next());
+					p.println(iter_.next());
 				}
+				p.println("-1");
 				vec = new Vector<String>();
 			}
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-
 		long time = System.currentTimeMillis() - startTime;
+		p.println("time: " + time + " millis");
+		p.close();
 		System.out.println("time: " + time + " millis");
 	}
 }
