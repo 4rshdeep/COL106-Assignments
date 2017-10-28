@@ -537,14 +537,13 @@ public class Anagram {
 
 				}
 			}
-			// Collections.sort(vec);
 			Set<String> set = new HashSet<String>();
 			set.addAll(vec);
 			vec.clear();
 			vec.addAll(set);
 			vec.add("-1");
-			// System.out.println(vec);
-				for (ListIterator<String> iter_ = vec.listIterator(); iter_.hasNext(); ) {
+			Collections.sort(vec);
+			for (ListIterator<String> iter_ = vec.listIterator(); iter_.hasNext(); ) {
 				System.out.println(iter_.next());
 			}
 			vec = new Vector<String>();
