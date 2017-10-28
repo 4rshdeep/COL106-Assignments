@@ -121,11 +121,11 @@ public class Solution {
 
 				}
 			}
-			// Collections.sort(vec);
 			Set<String> set = new HashSet<String>();
 			set.addAll(vec);
 			vec.clear();
 			vec.addAll(set);
+			Collections.sort(vec);
 			vec.add("-1");
 			// System.out.println(vec);
 				for (ListIterator<String> iter_ = vec.listIterator(); iter_.hasNext(); ) {
