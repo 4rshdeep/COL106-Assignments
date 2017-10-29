@@ -38,13 +38,7 @@ public class Anagram {
 				pos = c - 97;
 				// System.out.println(3);
 			}
-			try{
-				result *= PRIMES[pos];
-			}
-			catch (Exception e) {
-				System.out.println(c);
-			}
-
+			result *= PRIMES[pos];
 		}
 		return (result & 0x7fffffff) % num_buckets;
 	}
@@ -248,35 +242,35 @@ public class Anagram {
 
 		int count = 0;
 		// secondstr of length 3 and thirdstr of len-3
-		for (int i = 0; i < len - 2; i++) {
-			secondStr.append(sbStr.charAt(i));
-			for (int j = i + 1; j < len - 1; j++) {
-				secondStr.append(sbStr.charAt(j));
-				for (int k = j + 1; k < len; k++) {
-					secondStr.append(sbStr.charAt(k)); //Here I have a string of length 3
-					thirdStr.deleteCharAt(k);
-					thirdStr.deleteCharAt(j);
-					thirdStr.deleteCharAt(i);
-					list.add(secondStr + "_" + thirdStr);
-					count++;
-					if ((count == 10) && (len == 6)) {
-						return list;
-					} else if (len == 9) {
-						list.addAll(split_three_and_three(thirdStr.toString(), secondStr.toString()));//Check if overcount
-					} else if (len == 11) {
-						// 3*4*4
-						list.addAll(split_four_and_four(thirdStr.toString(), secondStr.toString()));
+		if (len!=12) {
+				
+			for (int i = 0; i < len - 2; i++) {
+				secondStr.append(sbStr.charAt(i));
+				for (int j = i + 1; j < len - 1; j++) {
+					secondStr.append(sbStr.charAt(j));
+					for (int k = j + 1; k < len; k++) {
+						secondStr.append(sbStr.charAt(k)); //Here I have a string of length 3
+						thirdStr.deleteCharAt(k);
+						thirdStr.deleteCharAt(j);
+						thirdStr.deleteCharAt(i);
+						list.add(secondStr + "_" + thirdStr);
+						count++;
+						if ((count == 10) && (len == 6)) {
+							return list;
+						} else if (len == 9) {
+							list.addAll(split_three_and_three(thirdStr.toString(), secondStr.toString()));//Check if overcount
+						} else if (len == 11) {
+							// 3*4*4
+							list.addAll(split_four_and_four(thirdStr.toString(), secondStr.toString()));
+						}
+						thirdStr = new StringBuilder(str);
+						secondStr.deleteCharAt(secondStr.length() - 1);
 					}
-					else if (len==12) {
-						list.addAll(split_four_and_five(thirdStr.toString(), secondStr.toString()));
-					}
-					thirdStr = new StringBuilder(str);
 					secondStr.deleteCharAt(secondStr.length() - 1);
 				}
 				secondStr.deleteCharAt(secondStr.length() - 1);
 			}
-			secondStr.deleteCharAt(secondStr.length() - 1);
-		}
+		}	
 
 		if (len == 7) {
 			return list;
@@ -377,6 +371,8 @@ public class Anagram {
 
 		count = 0;
 		// 6 len-6
+		StringBuilder secondStr12 = new StringBuilder();
+		StringBuilder thirdStr12  = new StringBuilder(str);
 		tempList = new Vector<String>();
 		for (int i = 0; i < len - 5; i++) {
 			secondStr.append(sbStr.charAt(i));
@@ -386,18 +382,25 @@ public class Anagram {
 					secondStr.append(sbStr.charAt(k)); //Here I have a string of length 3
 					for (int l = k + 1; l < len - 2; l++) {
 						secondStr.append(sbStr.charAt(l));
+						secondStr12.append(sbStr.charAt(l));
 						for (int m = l + 1; m < len - 1; m++) {
 							secondStr.append(sbStr.charAt(m));
+							secondStr12.append(sbStr.charAt(m));
 							for (int n = m + 1; n < len; n++) {
 								secondStr.append(sbStr.charAt(n));
+								secondStr12.append(sbStr.charAt(n));
 								thirdStr.deleteCharAt(n);
+								thirdStr12.deleteCharAt(n);
 								thirdStr.deleteCharAt(m);
+								thirdStr12.deleteCharAt(m);
 								thirdStr.deleteCharAt(l);
+								thirdStr12.deleteCharAt(l);
 								thirdStr.deleteCharAt(k);
 								thirdStr.deleteCharAt(j);
 								thirdStr.deleteCharAt(i);
 								count++;
 								list.addAll(split_three_and_three(thirdStr.toString(), secondStr.toString()));
+								list.addAll(split_four_and_five(thirdStr12.toString(), secondStr12.toString()));
 								if (count <= 462) {
 									// in case both partitions are equal after this we will have water image and mirror image
 									list.add(secondStr + "_" + thirdStr);
@@ -559,6 +562,25 @@ public class Anagram {
 				for (ListIterator<String> iter_ = vec.listIterator(); iter_.hasNext(); ) {
 					p.println(iter_.next());
 				}
+
+				/* If using Hashsets is not allowed */
+				// Collections.sort(vec);
+				// for (ListIterator<String> iter_ = vec.listIterator(); iter_.hasNext(); ) {
+				// 	currString = iter_.next();
+				// 	if (prevString==null) {
+				// 		p.println(currString);
+				// 		prevString = currString;
+				// 	}
+				// 	else {
+				// 		if (!currString.equals(prevString)) {
+				// 			p.println(currString);
+				// 			prevString = currString;
+				// 		}		
+				// 	}
+				// }
+				// define at top
+				// String prevString = null;
+			
 				p.println("-1");
 				vec = new Vector<String>();
 			}
@@ -594,38 +616,3 @@ class Hashtable {
 		table = new Node[n];
 	}
 }
-
-// while (!exit) {
-// 	input = s.next();
-// 	switch (input) {
-// 	case "hash":
-// 		System.out.println(a.hash(s.next()));
-// 	break;
-// 	case "contains" :
-// 		System.out.println(a.contains(s.next()));
-// 	break;
-// 	case "exit" :
-// 		exit = true;
-// 	break;
-// 	case "check_contains":
-// 		try {
-// 			System.out.println(1);
-// 			File f = new File(args[0]);
-// 			Scanner scan = new Scanner(f);
-// 			int c = scan.nextInt();
-// 			String tempStr = "";
-// 			for (int i=0; i<c; i++) {
-// 				System.out.println(i);
-// 				tempStr = a.hashtable.table[i].str;
-// 				if (a.contains(tempStr)==false) {
-// 					System.out.println("Contains has bugs");
-// 				}
-// 			}
-// 		} catch (Exception e) {
-// 			e.printStackTrace();
-// 		}
-
-// 		System.out.println("Seems to be correct");
-// 	break;
-// 	}
-// }
