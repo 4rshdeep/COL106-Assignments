@@ -1,9 +1,9 @@
 public class Node {
 	String str;
-	int dist;
+	int key;
 
 	public Node(int d, String s) {
 		str = s;
-		dist = d;
+		key = d;
 	}
 }

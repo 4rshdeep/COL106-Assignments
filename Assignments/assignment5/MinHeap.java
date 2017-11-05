@@ -37,7 +37,6 @@ public class MinHeap {
     }
 
     public int extractMin() {
-
         if (list.size() == 0) {
 
             throw new IllegalStateException("MinHeap is EMPTY");
@@ -54,13 +53,12 @@ public class MinHeap {
 
         // bubble-down until heap property is maintained
         minHeapify(0);
-
+        
         // return min key
         return min;
     }
 
     public void decreaseKey(int i, int key) {
-
         if (list.get(i) < key) {
 
             throw new IllegalArgumentException("Key is larger than the original key");
@@ -79,7 +77,6 @@ public class MinHeap {
     }
 
     private void minHeapify(int i) {
-
         int left = left(i);
         int right = right(i);
         int smallest = -1;

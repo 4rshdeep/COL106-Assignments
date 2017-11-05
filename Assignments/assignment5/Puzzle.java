@@ -5,25 +5,9 @@ import java.io.InputStreamReader;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Set;
 
 public class Puzzle {
-	static int vertices;
-	static HashMap<String, ArrayList<String>> adjMap;
-	static HashMap<Integer, String> distance;
-	static HashMap<String, String> previous;
-	static String startState;
-	static String finishState;
-	static MinHeap heap;
-
-	public Puzzle(int n) {
-		adjMap = new HashMap<String, ArrayList<String>>();
-		distance = new HashMap<Integer, String>();
-		previous = new HashMap<String, String>();
-		heap = new MinHeap();
-	}
 	
 	static void generatePermutations(StringBuilder sb, int size) {
 		if (size==1) {
@@ -48,91 +32,9 @@ public class Puzzle {
 		}
 	}
 	
-	static String swap(String str, int a, int b) {
-		StringBuilder sb = new StringBuilder(str);
-		char temp = sb.charAt(a);
-		sb.setCharAt(a, sb.charAt(b));
-		sb.setCharAt(b, temp);
-		return sb.toString();
-	}
-	
-	static void makeGraph(String str) {
-		Path path = Paths.get(str);
-		try {
-			InputStream in = Files.newInputStream(path);
-			BufferedReader reader = new BufferedReader(new InputStreamReader(in));
-			vertices = Integer.parseInt(reader.readLine());
-			String line;
-			StringBuilder sb;
-			ArrayList<String> arraylist;
-			for (int i = 0; i < vertices; i++) {
-				line = reader.readLine();
-				sb = new StringBuilder(line);
-				arraylist = new ArrayList<String>();
-				if (sb.charAt(0)=='G') {
-					//swap 0 and 1
-					arraylist.add(swap(line, 0, 1));
-					// swap 0 and 3
-					arraylist.add(swap(line, 0, 3)); 
-				}
-				else if(sb.charAt(1)=='G') {
-					arraylist.add(swap(line, 0, 1));
-					arraylist.add(swap(line, 4, 1));
-					arraylist.add(swap(line, 2, 1));
-				}
-				else if(sb.charAt(2)=='G') {
-					//swap 2 and 1
-					arraylist.add(swap(line, 1, 2));
-					//swap 2 and 5
-					arraylist.add(swap(line, 2, 5));
-				}
-				else if(sb.charAt(3)=='G') {
-					arraylist.add(swap(line, 0, 3));
-					arraylist.add(swap(line, 4, 3));
-					arraylist.add(swap(line, 6, 3));
-				}
-				else if(sb.charAt(4)=='G') {
-					arraylist.add(swap(line, 1, 4));
-					arraylist.add(swap(line, 3, 4));
-					arraylist.add(swap(line, 5, 4));
-					arraylist.add(swap(line, 7, 4));
-				}
-				else if(sb.charAt(5)=='G') {
-					arraylist.add(swap(line, 2, 5));
-					arraylist.add(swap(line, 4, 5));
-					arraylist.add(swap(line, 8, 5));
-				}
-				else if(sb.charAt(6)=='G') {
-					arraylist.add(swap(line, 3, 6));
-					arraylist.add(swap(line, 6, 7));
-				}
-				else if(sb.charAt(7)=='G') {
-					arraylist.add(swap(line, 4, 7));
-					arraylist.add(swap(line, 6, 7));
-					arraylist.add(swap(line, 8, 7));
-				}
-				else if(sb.charAt(8)=='G') {
-					arraylist.add(swap(line, 5, 8));
-					arraylist.add(swap(line, 7, 8));
-				}
-				adjMap.put(line, arraylist);
-				distance.put(-1, line);
-				heap.insert(-1);
-			}
-			distance.put(0, startState);
-			heap.insert(0);
-			System.out.println(distance.get(0));
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-	}
-	
-	
 	public static void main(String[] args) {
 		long startTime = System.currentTimeMillis();
-		Puzzle pz = new Puzzle(362880);
-//		StringBuilder sb = new StringBuilder("12345678G");
-//		generatePermutations(sb, 9);
+		Graph graph = new Graph(362880);
 		Path path = Paths.get(args[0]);
 		InputStream in = null;
 		try {
@@ -143,43 +45,170 @@ public class Puzzle {
 			
 			String nextLine = reader.readLine();
 			String[] strings = nextLine.split("\\s+");
-			startState = strings[0];
-			finishState = strings[1];
+			graph.startState = strings[0];
+			graph.finishState = strings[1];
+
+			nextLine = reader.readLine();
+			strings  = nextLine.split("\\s+");
+			graph.weights.put('1', Integer.parseInt(strings[0]));
+			graph.weights.put('2', Integer.parseInt(strings[1]));
+			graph.weights.put('3', Integer.parseInt(strings[2]));
+			graph.weights.put('4', Integer.parseInt(strings[3]));
+			graph.weights.put('5', Integer.parseInt(strings[4]));
+			graph.weights.put('6', Integer.parseInt(strings[5]));
+			graph.weights.put('7', Integer.parseInt(strings[6]));
+			graph.weights.put('8', Integer.parseInt(strings[7]));
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
 		
-		makeGraph("perms.txt");
-		Set<String> set   = adjMap.keySet();
-		Set<String> cloud = new HashSet<String>();
-		int min_distance;
-		String min_vertex;
-		while (!heap.isEmpty()) {
-			min_distance = extractMin();
-			distance.get(min_distance);
-			if () {
-				
-			}
-			cloud.add()
-		}
-
-
-//		for (Entry<String, ArrayList<String>> entry : adjMap.entrySet())
-//		{
-//		    System.out.println(entry.getKey() + "/" + entry.getValue());
-//		}
+		graph.makeGraph("perms.txt");
+		graph.dijkstra();
+		String latter = graph.finishState;
+		String former;
+		StringBuilder sb = new StringBuilder();
 		
+		HashMap<String, String> next = new HashMap<String, String>();
+		
+		while(!latter.equals(graph.startState)) {
+			System.out.println(latter);
+			former = graph.previous.get(latter);
+			System.out.println(former);
+			next.put(former, latter);
+			latter = former;
+		}
+		
+		former = graph.startState;
+		boolean done = false;
+		while(!done) {
+			latter = next.get(former);
+			move(former, latter);
+			former = latter;
+			if (former.equals(graph.finishState)) {
+				break;
+			}
+			System.out.println(" ");
+		}
 		long time = System.currentTimeMillis() - startTime;
 		System.out.println(time);
+	}
+
+	private static void move(String former, String latter) {
+		if (former.charAt(0)=='G') {
+			System.out.print(latter.charAt(0));
+			if (latter.charAt(1)=='G') {
+				System.out.print("L");
+			}
+			else if (latter.charAt(3)=='G') {
+				System.out.print("U");
+			}
+		}
+		else if (former.charAt(1)=='G') {
+			System.out.print(latter.charAt(1));
+			if (latter.charAt(0)=='G') {
+				System.out.print("R");
+			}
+			else if (latter.charAt(2)=='G'){
+				System.out.print("L");
+			}
+			else if (latter.charAt(4)=='G') {
+				System.out.print("U");
+			}
+		}
+		else if(former.charAt(2)=='G') {
+			System.out.print(latter.charAt(2));
+			if (latter.charAt(1)=='G') {
+				System.out.print("R");
+			}
+			else if (latter.charAt(5)=='G'){
+				System.out.print("U");
+			}
+		}
+		else if(former.charAt(3)=='G') {
+			System.out.print(latter.charAt(3));
+			if (latter.charAt(0)=='G') {
+				System.out.print("D");
+			}
+			else if (latter.charAt(4)=='G'){
+				System.out.print("L");
+			}
+			else if (latter.charAt(6)=='G') {
+				System.out.print("U");
+			}
+		}
+		else if(former.charAt(4)=='G') {
+			System.out.print(latter.charAt(4));
+			if (latter.charAt(1)=='G') {
+				System.out.print("D");
+			}
+			else if (latter.charAt(3)=='G'){
+				System.out.print("R");
+			}
+			else if (latter.charAt(5)=='G') {
+				System.out.print("L");
+			}
+			else if (latter.charAt(7)=='G') {
+				System.out.print("U");
+			}
+		}
+		else if(former.charAt(5)=='G') {
+			System.out.print(latter.charAt(5));
+			if (latter.charAt(2)=='G') {
+				System.out.print("D");
+			}
+			else if (latter.charAt(4)=='G'){
+				System.out.print("R");
+			}
+			else if (latter.charAt(8)=='G') {
+				System.out.print("U");
+			}
+		}
+		else if(former.charAt(6)=='G') {
+			System.out.print(latter.charAt(6));
+			if (latter.charAt(7)=='G') {
+				System.out.print("L");
+			}
+			else if (latter.charAt(3)=='G'){
+				System.out.print("D");
+			}
+		}
+		else if(former.charAt(7)=='G') {
+			System.out.print(latter.charAt(7));
+			if (latter.charAt(4)=='G') {
+				System.out.print("D");
+			}
+			else if (latter.charAt(6)=='G'){
+				System.out.print("R");
+			}
+			else if (latter.charAt(8)=='G') {
+				System.out.print("L");
+			}
+		}
+		else if(former.charAt(8)=='G') {
+			System.out.print(latter.charAt(8));
+			if (latter.charAt(7)=='G') {
+				System.out.print("R");
+			}
+			else if (latter.charAt(5)=='G'){
+				System.out.print("D");
+			}
+		}
+		else {
+			System.out.println("somethings wrong with the moves");
+		}
 	}
 }
 
 
 
-//
-//class Graph {
-//	
-//}
+
+
+
+
+
+
+
+
 
 
 
