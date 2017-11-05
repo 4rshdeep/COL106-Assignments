@@ -39,7 +39,6 @@ public class Anagram {
 				// System.out.println(3);
 			}
 			result *= PRIMES[pos];
-
 		}
 		return (result & 0x7fffffff) % num_buckets;
 	}
@@ -68,7 +67,18 @@ public class Anagram {
 					hashtable.table[bucket] = new Node(hashtable.table[bucket], nextStr, sorted);
 				}
 			}
-			
+			Node tempNode;
+			// max elements hashed to a particular bucket is 11 which can further be decreased by increasing num_b
+			for (int i = 0; i < num_buckets; i++) {
+				tempNode = hashtable.table[i];
+				// System.out.println("here");
+				// System.out.print(i + ": ");
+				while (tempNode != null) {
+					// System.out.print(tempNode.str + "(" + tempNode.sortedStr + ") ");
+					tempNode = tempNode.next;
+				}
+				// System.out.println();
+			}
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
 		} catch (NumberFormatException e) {
@@ -80,6 +90,17 @@ public class Anagram {
 		}
 	}
 
+	// static void show_hashtable(int idx) {
+	// 	Node tempNode = hashtable.table[idx];
+	// 	System.out.print(String.valueOf(idx) + ": ");
+	// 	while (tempNode != null) {
+	// 		System.out.print(tempNode.str + "(" + tempNode.sortedStr + ") ");
+	// 		tempNode = tempNode.next;
+	// 	}
+	// 	System.out.println();
+	// }
+
+	
 
 	/* breaks str into 3*3 and returns a List after concatenating first+3*3 */
 	static List<String> split_three_and_three(String str, String first) {
@@ -211,7 +232,7 @@ public class Anagram {
 		List<String> tempList   = new Vector<String>();
 		int len = str.length();
 
-		if ((len < 3)||(len>12)) {
+		if ((len < 3)) {
 			return list;
 		}
 		list.add(thirdStr + "_");
@@ -397,6 +418,7 @@ public class Anagram {
 		// convert input string to char array
 		char tempArray[] = str.toCharArray();
 		// sort tempArray
+
 		Arrays.sort(tempArray);
 		// return new sorted string
 		return new String(tempArray);
@@ -420,7 +442,15 @@ public class Anagram {
 
 	public static void main(String[] args) {
 		long startTime = System.currentTimeMillis();
-		Anagram a = new Anagram(25033);
+		// 54001 41 secs on dictionary
+		// 4001 46 secs
+		// 10007 45 secs
+		// 53003 41 secs
+		// 93001 42 secs
+		// 99991 
+		// 25033 43.8
+
+		Anagram a = new Anagram(20011);
 		load(args[0]);
 
 		BufferedOutputStream bout = new BufferedOutputStream(System.out);//TODO
@@ -429,8 +459,7 @@ public class Anagram {
 		try {
 			Path path = Paths.get(args[1]);
 			InputStream in = null;
-			
-				in = Files.newInputStream(path);
+			in = Files.newInputStream(path);
 			
 			BufferedReader reader = new BufferedReader(new InputStreamReader(in));
 			
@@ -532,6 +561,25 @@ public class Anagram {
 				for (ListIterator<String> iter_ = vec.listIterator(); iter_.hasNext(); ) {
 					p.println(iter_.next());
 				}
+
+				/* If using Hashsets is not allowed */
+				// Collections.sort(vec);
+				// for (ListIterator<String> iter_ = vec.listIterator(); iter_.hasNext(); ) {
+				// 	currString = iter_.next();
+				// 	if (prevString==null) {
+				// 		p.println(currString);
+				// 		prevString = currString;
+				// 	}
+				// 	else {
+				// 		if (!currString.equals(prevString)) {
+				// 			p.println(currString);
+				// 			prevString = currString;
+				// 		}		
+				// 	}
+				// }
+				// define at top
+				// String prevString = null;
+			
 				p.println("-1");
 				vec = new Vector<String>();
 			}

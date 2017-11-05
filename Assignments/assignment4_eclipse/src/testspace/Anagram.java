@@ -26,7 +26,11 @@ public class Anagram {
 			if (c == 39) {
 				pos = 37;
 				// System.out.println(1);
-			} else if (c < 97) {
+			} 
+			else if(c == 32) {
+				continue;
+			}
+			else if (c < 97) {
 				// System.out.println(c);
 				pos = c - 22;
 				// System.out.println(2);
@@ -64,18 +68,7 @@ public class Anagram {
 					hashtable.table[bucket] = new Node(hashtable.table[bucket], nextStr, sorted);
 				}
 			}
-			// Node tempNode;
-			// // max elements hashed to a particular bucket is 11 which can further be decreased by increasing num_b
-			// for (int i = 0; i < num_buckets; i++) {
-			// 	tempNode = hashtable.table[i];
-			// 	// System.out.println("here");
-			// 	// System.out.print(i + ": ");
-			// 	while (tempNode != null) {
-			// 		// System.out.print(tempNode.str + "(" + tempNode.sortedStr + ") ");
-			// 		tempNode = tempNode.next;
-			// 	}
-			// 	// System.out.println();
-			// }
+			
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
 		} catch (NumberFormatException e) {
@@ -87,17 +80,6 @@ public class Anagram {
 		}
 	}
 
-	// static void show_hashtable(int idx) {
-	// 	Node tempNode = hashtable.table[idx];
-	// 	System.out.print(String.valueOf(idx) + ": ");
-	// 	while (tempNode != null) {
-	// 		System.out.print(tempNode.str + "(" + tempNode.sortedStr + ") ");
-	// 		tempNode = tempNode.next;
-	// 	}
-	// 	System.out.println();
-	// }
-
-	
 
 	/* breaks str into 3*3 and returns a List after concatenating first+3*3 */
 	static List<String> split_three_and_three(String str, String first) {
@@ -438,7 +420,7 @@ public class Anagram {
 
 	public static void main(String[] args) {
 		long startTime = System.currentTimeMillis();
-		Anagram a = new Anagram(15000);
+		Anagram a = new Anagram(25033);
 		load(args[0]);
 
 		BufferedOutputStream bout = new BufferedOutputStream(System.out);//TODO
