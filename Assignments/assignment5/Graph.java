@@ -7,18 +7,23 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.ListIterator;
+import java.util.Map;
+import java.util.*;
 
 class Graph {
 	int vertices;
 	HashMap<String, ArrayList<String>> adjMap;
 	HashMap<String, Integer> distance;
+	HashMap<String, Integer> cost;
 	HashMap<String, String> previous;
 	String startState;
 	String finishState;
 	Heap heap;
 	HashMap<Character, Integer> weights;
-	int MAX_VALUE = 2147483647;
+	int MAX_VALUE = 47483647;
+
 	
 	public Graph(int n) {
 		adjMap   = new HashMap<String, ArrayList<String>>();
@@ -26,6 +31,7 @@ class Graph {
 		heap     = new Heap();
 		weights  = new HashMap<Character, Integer>();
 		distance = new HashMap<String, Integer>();
+		cost	 = new HashMap<String, Integer>();
 	}
 	
 	void makeGraph(String str) {
@@ -86,10 +92,12 @@ class Graph {
 				adjMap.put(line, arraylist);
 				if (line.equals(startState)) {
 					heap.insert(new Node(0, startState));
+					cost.put(startState, 0);
 					distance.put(startState, 0);
 				}
 				else {
 					heap.insert(new Node(MAX_VALUE, line));
+					cost.put(line, MAX_VALUE);
 					distance.put(line, MAX_VALUE);
 				}
 			}
@@ -106,26 +114,47 @@ class Graph {
 		return sb.toString();
 	}
 	
-	
+// 	public static void printMap(Map mp) {
+// 	    Iterator it = mp.entrySet().iterator();
+// 	    while (it.hasNext()) {
+// 	        Map.Entry pair = (Map.Entry)it.next();
+// 	        System.out.println(pair.getKey() + " = " + pair.getValue());
+// //	        it.remove(); // avoids a ConcurrentModificationException
+// 	    }
+// 	}
+
+	int ITERATIONS = 10;
+	int num_iter = 0;
 	void dijkstra() {
 		int w, d1, d2;
 		Node min_distance_node;
 		while (!heap.isEmpty()) {
 			min_distance_node = heap.extractMin();
+			int cost_extracted_node = cost.get(min_distance_node.str)+1;
 			ArrayList<String> list = adjMap.get(min_distance_node.str);
 			for (ListIterator<String> iter = list.listIterator(); iter.hasNext(); ) {
 			    String nStr = iter.next();
 			    w = weight(min_distance_node.str, nStr);
-			    d1 = distance.get(min_distance_node.str);
-			    d2 = distance.get(nStr)+w;
+			    d1 = distance.get(min_distance_node.str) + w;
+			    d2 = distance.get(nStr);
 			    if(d2 > d1) {
 			    	distance.put(nStr, d1);
 			    	heap.decreaseKey(nStr, d1);
 			    	//set the previous
+			    	// System.out.println(nStr + " " +  min_distance_node.str);
 			    	previous.put(nStr, min_distance_node.str);//Can put the movement here
+			    	cost.put(nStr, cost_extracted_node);
+			    }
+			    if (d2 == d1) {
+			    	int cost_current = cost.get(nStr);
+			    	if (cost_current>cost_extracted_node) {
+			    		previous.put(nStr, min_distance_node.str);
+			    		cost.put(nStr, cost_extracted_node);
+			    	}
 			    }
 			 }
 		}
+		// System.out.println(previous);
 	}
 
 	private int weight(String former, String latter) {
