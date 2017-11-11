@@ -70,7 +70,7 @@ public class Puzzle {
 				graph.weights.put('8', Integer.parseInt(strings[7]));
 				
 				
-				graph.makeGraph("perms.txt");
+				graph.makeGraph();
 
 				graph.dijkstra();
 				String latter = graph.finishState;
