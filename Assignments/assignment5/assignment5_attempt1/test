@@ -1,0 +1,15 @@
+insert 20 a
+insert 30 b
+insert 50 c
+insert 60 d
+insert 70 e
+insert 80 f
+insert 90 g
+insert 100 h
+insert 9000 sjhd
+insert 1028 aji
+insert 798 ajh
+insert 19092 ajwse
+decreaseKey ajwse 71
+decreaseKey ajwse 31
+getMin

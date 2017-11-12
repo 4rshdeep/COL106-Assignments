@@ -11,6 +11,8 @@ import java.util.Iterator;
 import java.util.ListIterator;
 import java.util.Map;
 import java.util.*;
+// import org.apache.commons.lang3.ArrayUtils;
+// import java.util.Arrays;
 
 class Graph {
 	int vertices;
@@ -118,11 +120,19 @@ class Graph {
 		queue.add(startState);
 		int count =0;
 		while (!done) {
-			// System.out.println("while");
+			System.out.println(1);
+			// List<String> letters = Arrays.asList( "1", "2", "3", "4", "5", "6", "7", "8", "G" );
+			// String tStr = startState;
+			// Character[] chArr = ArrayUtils.toObject(tStr.toCharArray());
+			// Collections.shuffle(Arrays.asList(chArr));
+			// System.out.println(ArrayUtils.toString(chArr));
+			
 			str = queue.remove();
 			// System.out.print(count++);
 			// System.out.println("--"+str);
+			count++;
 			set.add(str);
+			
 			arraylist = getNextStates(str);
 			// System.out.println(arraylist);
 			// System.out.println(nextHasTarget(str));
@@ -143,7 +153,6 @@ class Graph {
 			// }
 			if (str.equals(finishState)) {
 				set.add(finishState);
-				System.out.println(set);
 				done = true; 
 				break;
 				// return;
@@ -151,16 +160,19 @@ class Graph {
 			else {
 				for (ListIterator<String> iter = arraylist.listIterator(); iter.hasNext(); ) {
 					String tempStr = iter.next();
-					queue.add(tempStr);
+					if (!set.contains(tempStr)) {
+						queue.add(tempStr);	
+					}
 				}
 			}
-
-
+			// if (count == 562880) {
+			// 	return;
+			// }
 		}
 		Iterator it = set.iterator();
 		while (it.hasNext()) {
 			String temp = (String)it.next();
-			arraylist = getNextStates(temp);
+			arraylist = getMarkedNeighbours(temp);
 			adjMap.put(temp, arraylist);
 			if (temp.equals(startState)) {
 				distance.put(startState, 0);
@@ -173,28 +185,8 @@ class Graph {
 				heap.insert(new Node(MAX_VALUE, temp));
 			}
 		}
-		// printMap(adjMap);
-
 	}
 
-	boolean hasFinish(ArrayList<String> list) {
-		for (ListIterator<String> iter = list.listIterator(); iter.hasNext(); ) {
-			String tempStr1 = iter.next();
-			ArrayList<String> arraylist = new ArrayList<String>();
-			for (ListIterator<String> iter2 = arraylist.listIterator(); iter2.hasNext(); ) {
-				String tempStr2 = iter2.next();
-				ArrayList<String> arraylist2 = new ArrayList<String>();
-				for (ListIterator<String> iter3 = arraylist2.listIterator(); iter3.hasNext(); ) {
-					String tempStr3 = iter3.next();
-					if (tempStr3.equals(finishState)) {
-						System.out.println("this");
-						return true;
-					}
-				}
-			}
-		}
-		return false;
-	}
 	
 // 	void makeGraph() {
 // 		System.out.println("hs");
@@ -293,34 +285,7 @@ class Graph {
 // //		
 // 	}
 	
-	boolean nextHasTarget(String s) {
-		ArrayList<String> arraylist;
-		boolean check = false;
-		arraylist = getNextStates(s);
-		String tempStr;
-		
-		for (ListIterator<String> iter = arraylist.listIterator(); iter.hasNext(); ) {
-			tempStr = iter.next();
-			if (tempStr.equals(finishState)) {
-				check = true;
-			}
-		}
-		return check;
-	}
-
-	boolean nextToNextHasTarget(String str) {
-		ArrayList<String> arraylist;
-		boolean check = false;
-		arraylist = getNextStates(str);
-		String tempStr;
-		for (ListIterator<String> iter = arraylist.listIterator(); iter.hasNext(); ) {
-			tempStr = iter.next();
-			if (nextHasTarget(tempStr)) {
-				check = true;
-			}
-		}
-		return check;
-	}
+	
 	
 	ArrayList<String> getNextStates(String str) {
 		ArrayList<String> arraylist = new ArrayList<String>();
@@ -435,7 +400,7 @@ class Graph {
 		sb.setCharAt(a, sb.charAt(b));
 		sb.setCharAt(b, temp);
 		String tempStr = sb.toString();
-		if (set.contains(tempStr)) {
+		if (!set.contains(tempStr)) {
 			return null;
 		}
 		return tempStr;
@@ -446,15 +411,13 @@ class Graph {
 	    int count = 0;
 	    while (it.hasNext()) {
 	        Map.Entry pair = (Map.Entry)it.next();
-	        System.out.print(count++);
-	        System.out.println("--" + pair.getKey() + " = " + pair.getValue());
-//	        it.remove(); // avoids a ConcurrentModificationException
 	    }
 	}
 
-	int ITERATIONS = 10;
-	int num_iter = 0;
 	void dijkstra() {
+		// if (true) {
+		// 	return;	
+		// }
 		int w, d1, d2;
 		Node min_distance_node;
 		while (!heap.isEmpty()) {
@@ -468,6 +431,7 @@ class Graph {
 			    String nStr = iter.next();
 			    w = weight(min_distance_node.str, nStr);
 			    d1 = distance.get(min_distance_node.str) + w;
+			    // System.out.println(nStr);
 			    // System.out.println(nStr);
 			    d2 = distance.get(nStr);
 			    if(d2 > d1) {
