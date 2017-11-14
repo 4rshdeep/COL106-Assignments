@@ -1,19 +1,10 @@
 import java.util.ArrayList;
 import java.util.*;
 
-public class Heap implements Cloneable{
-	ArrayList<Node> heapList = new ArrayList<>(362880);
+public class Heap{
+	ArrayList<Node> heapList = new ArrayList<>();
 	HashMap<String, Integer> map = new HashMap<String, Integer>();
 	
-
-	public Heap clone() throws CloneNotSupportedException {
-		Heap clone;
-		clone = (Heap) super.clone();
-		clone.heapList = (ArrayList<Node>)this.heapList.clone();
-		clone.map 	   = (HashMap<String, Integer>)this.map.clone();
-		return clone;
-    }
-
 	// index starts from one instead of zero
 	int left(int i) {
 		return (2*i)+1;

@@ -134,8 +134,8 @@ def random_moves(moves):
 
 
 random.seed(None)
-# MODE = "FORMAT_CHECKER"
-MODE = "RANDOM_MOVES"
+MODE = "FORMAT_CHECKER"
+# MODE = "RANDOM_MOVES"
 if __name__ == '__main__':
     if MODE == "FORMAT_CHECKER":
         format_checker(sys.argv[1], sys.argv[2])

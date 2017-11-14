@@ -35,7 +35,8 @@ class Graph {
 		distance = new HashMap<String, Integer>();
 		cost	 = new HashMap<String, Integer>();
 	}
-	int MAX_VALUE =  147483647;	
+	int MAX_VALUE = 47483647;
+	
 	
 	void makeGraph(Vector<String> vec) {
 		
@@ -120,11 +121,9 @@ class Graph {
 		heap.insert(new Node(0, startState));
 		cost.put(startState, 0);
 		distance.put(startState, 0);
-		int temp1, temp2;
-		char tempChar;
-		int c=181442;
-		while ((!heap.isEmpty())&&(c>=0)) {
-			c--;
+		int count = 181445;
+		while ((!heap.isEmpty())&&(count>0)) {
+			count--;
 			min_distance_node = heap.extractMin();
 			if ((min_distance_node.str).equals(finishState)) {
 				break;
@@ -134,10 +133,7 @@ class Graph {
 			for (ListIterator<String> iter = list.listIterator(); iter.hasNext(); ) {
 
 			    String nStr = iter.next();
-			    temp1 = min_distance_node.str.indexOf('G');
-			    tempChar = nStr.charAt(temp1);
-
-			    w = weights.get(tempChar);
+			    w = weight(min_distance_node.str, nStr);
 			    d1 = distance.get(min_distance_node.str) + w;
 			    d2 = distance.get(nStr);
 			    if(d2 > d1) {
@@ -162,57 +158,57 @@ class Graph {
 		}
 	}
 
-	// private int weight(String former, String latter) {
-	// 	if(former.charAt(0)=='G') {
-	// 		if(latter.charAt(1)=='G' || latter.charAt(3)=='G') {
-	// 			return weights.get(latter.charAt(0));
-	// 		}
-	// 	}
-	// 	else if(former.charAt(1)=='G') {
-	// 		if(latter.charAt(0)=='G' || latter.charAt(2)=='G' || latter.charAt(4)=='G') {
-	// 			return weights.get(latter.charAt(1));
-	// 		}
-	// 	}
-	// 	else if(former.charAt(2)=='G') {
-	// 		if(latter.charAt(1)=='G' || latter.charAt(5)=='G') {
-	// 			return weights.get(latter.charAt(2));
-	// 		}
-	// 	}
-	// 	else if(former.charAt(3)=='G') {
-	// 		if(latter.charAt(0)=='G' || latter.charAt(4)=='G' || latter.charAt(6)=='G') {
-	// 			return weights.get(latter.charAt(3));
-	// 		}
-	// 	}
-	// 	else if(former.charAt(4)=='G') {
-	// 		if(latter.charAt(1)=='G' || latter.charAt(3)=='G' || latter.charAt(5)=='G' || latter.charAt(7)=='G') {
-	// 			return weights.get(latter.charAt(4));
-	// 		}
-	// 	}
-	// 	else if(former.charAt(5)=='G') {
-	// 		if(latter.charAt(2)=='G' || latter.charAt(4)=='G' || latter.charAt(8)=='G') {
-	// 			return weights.get(latter.charAt(5));
-	// 		}
-	// 	}
-	// 	else if(former.charAt(6)=='G') {
-	// 		if(latter.charAt(7)=='G' || latter.charAt(3)=='G') {
-	// 			return weights.get(latter.charAt(6));
-	// 		}
-	// 	}
-	// 	else if(former.charAt(7)=='G') {
-	// 		if(latter.charAt(4)=='G' || latter.charAt(6)=='G' || latter.charAt(8)=='G') {
-	// 			return weights.get(latter.charAt(7));
-	// 		}
-	// 	}
-	// 	else if(former.charAt(8)=='G') {
-	// 		if(latter.charAt(7)=='G' || latter.charAt(5)=='G') {
-	// 			return weights.get(latter.charAt(8));
-	// 		}
-	// 	}
-	// 	else {
-	// 		System.out.println("somethings wrong with the edge weights");
-	// 	}
-	// 	return 1;
-	// }
+	private int weight(String former, String latter) {
+		if(former.charAt(0)=='G') {
+			if(latter.charAt(1)=='G' || latter.charAt(3)=='G') {
+				return weights.get(latter.charAt(0));
+			}
+		}
+		else if(former.charAt(1)=='G') {
+			if(latter.charAt(0)=='G' || latter.charAt(2)=='G' || latter.charAt(4)=='G') {
+				return weights.get(latter.charAt(1));
+			}
+		}
+		else if(former.charAt(2)=='G') {
+			if(latter.charAt(1)=='G' || latter.charAt(5)=='G') {
+				return weights.get(latter.charAt(2));
+			}
+		}
+		else if(former.charAt(3)=='G') {
+			if(latter.charAt(0)=='G' || latter.charAt(4)=='G' || latter.charAt(6)=='G') {
+				return weights.get(latter.charAt(3));
+			}
+		}
+		else if(former.charAt(4)=='G') {
+			if(latter.charAt(1)=='G' || latter.charAt(3)=='G' || latter.charAt(5)=='G' || latter.charAt(7)=='G') {
+				return weights.get(latter.charAt(4));
+			}
+		}
+		else if(former.charAt(5)=='G') {
+			if(latter.charAt(2)=='G' || latter.charAt(4)=='G' || latter.charAt(8)=='G') {
+				return weights.get(latter.charAt(5));
+			}
+		}
+		else if(former.charAt(6)=='G') {
+			if(latter.charAt(7)=='G' || latter.charAt(3)=='G') {
+				return weights.get(latter.charAt(6));
+			}
+		}
+		else if(former.charAt(7)=='G') {
+			if(latter.charAt(4)=='G' || latter.charAt(6)=='G' || latter.charAt(8)=='G') {
+				return weights.get(latter.charAt(7));
+			}
+		}
+		else if(former.charAt(8)=='G') {
+			if(latter.charAt(7)=='G' || latter.charAt(5)=='G') {
+				return weights.get(latter.charAt(8));
+			}
+		}
+		else {
+			System.out.println("somethings wrong with the edge weights");
+		}
+		return 1;
+	}
 
 }
 

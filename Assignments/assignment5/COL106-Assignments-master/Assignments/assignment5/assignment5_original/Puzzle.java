@@ -43,33 +43,11 @@ public class Puzzle {
 		return vec;
 	}
 
-	// algorithm used from geeksforgeeks
-	private static void permute(String str, int l, int r)
-    {
-        if (l == r)
-            vec.add(str);
-        else
-        {
-            for (int i = l; i <= r; i++)
-            {
-                str = swap(str,l,i);
-                permute(str, l+1, r);
-                str = swap(str,l,i);
-            }
-        }
-    }
-    public static String swap(String a, int i, int j)
-    {
-        char temp;
-        char[] charArray = a.toCharArray();
-        temp = charArray[i] ;
-        charArray[i] = charArray[j];
-        charArray[j] = temp;
-        return String.valueOf(charArray);
-    }
-
 	
 	public static void main(String[] args) {
+		long startTime1 = System.currentTimeMillis();
+		int numIter = 0;
+		
 		Path path = Paths.get(args[0]);
 		InputStream in = null;
 		FileOutputStream fileOut = null;
@@ -84,11 +62,21 @@ public class Puzzle {
 			in = Files.newInputStream(path);
 			BufferedReader reader = new BufferedReader(new InputStreamReader(in));
 			int numInput = Integer.parseInt(reader.readLine());
-			permute("12345678G", 0, 8);
+			Vector<String> v = generatePermutations(new StringBuilder("12345678G"), 9);
 			boolean done = false;
 			Graph graph = null;
+			long startTime = System.currentTimeMillis();
+			long time = System.currentTimeMillis();
 			for (int i=0; i<numInput; i++) {
+				time = System.currentTimeMillis() - startTime;
+				startTime = System.currentTimeMillis();
+				if (i!=0) {
+					p.println(time);
+				}
+					
+
 				Graph prevGraph = graph;
+
 				graph = new Graph(362880);
 				String nextLine = reader.readLine();
 				String[] strings = nextLine.split("\\s+");
@@ -98,7 +86,7 @@ public class Puzzle {
 				nextLine = reader.readLine();
 
 				if (i == 0) {
-					graph.makeGraph(vec);
+					graph.makeGraph(v);
 				}
 				else {
 					graph.adjMap         = (HashMap<String, ArrayList<String>>)prevGraph.adjMap;
@@ -124,6 +112,8 @@ public class Puzzle {
 				graph.weights.put('7', Integer.parseInt(strings[6]));
 				graph.weights.put('8', Integer.parseInt(strings[7]));
 				
+				
+			
 				// graph.previous
 				graph.dijkstra();
 				String latter = graph.finishState;
@@ -164,12 +154,16 @@ public class Puzzle {
 				p.print(" ");
 				p.println(cost);
 				p.println(sb.toString());
+				
 			}
 			
 		} 
 		catch (IOException e) {
-			e.printStackTrace();
+				e.printStackTrace();
 		}
+		long time2 = System.currentTimeMillis()-startTime1;
+		p.print("Total Time ");
+		p.println(time2);
 		p.close();
 	}
 

@@ -2,7 +2,7 @@ import java.util.ArrayList;
 import java.util.*;
 
 public class Heap implements Cloneable{
-	ArrayList<Node> heapList = new ArrayList<>(362880);
+	ArrayList<Node> heapList = new ArrayList<>();
 	HashMap<String, Integer> map = new HashMap<String, Integer>();
 	
 

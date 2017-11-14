@@ -1,30 +1,22 @@
-import java.io.BufferedOutputStream;
 import java.io.BufferedReader;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.io.OutputStream;
-import java.io.PrintWriter;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.*;
+import java.util.HashMap;
 //TODO store only the graph needed by using a queue
 //TODO Stop when final state is reached in djikstra's
 
 public class Puzzle {
-	static StringBuilder sb;
-	static int cost;
-	static char movedChar;
-	static Vector<String> vec = new Vector<String>();
-
-	static Vector<String> generatePermutations(StringBuilder sb, int size) {
+	
+	static void generatePermutations(StringBuilder sb, int size) {
 		if (size==1) {
-			vec.add(sb.toString());
+			System.out.println(sb);
 		}
 		char fChar, lChar;
+		
 		for (int i = 0; i < size; i++) {
 			generatePermutations(sb, size-1);
 			if ((size%2)==1) {//if size is odd swap first and last
@@ -40,56 +32,21 @@ public class Puzzle {
 				sb.setCharAt(size-1, fChar);
 			}
 		}
-		return vec;
 	}
-
-	// algorithm used from geeksforgeeks
-	private static void permute(String str, int l, int r)
-    {
-        if (l == r)
-            vec.add(str);
-        else
-        {
-            for (int i = l; i <= r; i++)
-            {
-                str = swap(str,l,i);
-                permute(str, l+1, r);
-                str = swap(str,l,i);
-            }
-        }
-    }
-    public static String swap(String a, int i, int j)
-    {
-        char temp;
-        char[] charArray = a.toCharArray();
-        temp = charArray[i] ;
-        charArray[i] = charArray[j];
-        charArray[j] = temp;
-        return String.valueOf(charArray);
-    }
-
 	
 	public static void main(String[] args) {
+		// System.out.println((Integer.MAX_VALUE+10)& 0x7fffffff);
+		long startTime = System.currentTimeMillis();
+		Graph graph = new Graph(362880);
 		Path path = Paths.get(args[0]);
 		InputStream in = null;
-		FileOutputStream fileOut = null;
-		try {
-			fileOut = new FileOutputStream(args[1]);
-		} catch (FileNotFoundException e1) {
-			e1.printStackTrace();
-		}
-		BufferedOutputStream bout = new BufferedOutputStream(fileOut);
-		PrintWriter p = new PrintWriter(bout);
 		try {
 			in = Files.newInputStream(path);
 			BufferedReader reader = new BufferedReader(new InputStreamReader(in));
 			int numInput = Integer.parseInt(reader.readLine());
-			permute("12345678G", 0, 8);
-			boolean done = false;
-			Graph graph = null;
+			// assume numInput to be 1
 			for (int i=0; i<numInput; i++) {
-				Graph prevGraph = graph;
-				graph = new Graph(362880);
+					
 				String nextLine = reader.readLine();
 				String[] strings = nextLine.split("\\s+");
 				graph.startState = strings[0];
@@ -97,20 +54,8 @@ public class Puzzle {
 
 				nextLine = reader.readLine();
 
-				if (i == 0) {
-					graph.makeGraph(vec);
-				}
-				else {
-					graph.adjMap         = (HashMap<String, ArrayList<String>>)prevGraph.adjMap;
-					graph.cost 	         = (HashMap<String, Integer>)prevGraph.clonedCost.clone();
-					graph.clonedCost     = (HashMap<String, Integer>)prevGraph.clonedCost.clone();
-					graph.distance       = (HashMap<String, Integer>)prevGraph.clonedDistance.clone();
-					graph.clonedDistance = (HashMap<String, Integer>)prevGraph.clonedDistance.clone();
-				}
-
 				if (strings[0].equals(strings[1])) {
-					p.println("0 0");
-					p.println();
+					System.out.println("strings equal");
 					continue;
 				}
 
@@ -124,19 +69,25 @@ public class Puzzle {
 				graph.weights.put('7', Integer.parseInt(strings[6]));
 				graph.weights.put('8', Integer.parseInt(strings[7]));
 				
-				// graph.previous
+				
+				graph.makeGraph();
+
 				graph.dijkstra();
 				String latter = graph.finishState;
 				
 				String former;
+				StringBuilder sb = new StringBuilder();
+				
 				HashMap<String, String> next = new HashMap<String, String>();
 				if (graph.previous.get(latter) == null) {
-						p.println("-1 -1");
-						p.println();
+						System.out.println("no path exist");
 						continue;		
 				}
+				boolean done = false;
 				while(!latter.equals(graph.startState)) {
+					// System.out.println(latter);
 					former = graph.previous.get(latter);
+					// System.out.println(former);
 					next.put(former, latter);
 					latter = former;
 				}
@@ -145,142 +96,125 @@ public class Puzzle {
 				}
 				former = graph.startState;
 				done = false;
-				int count = 0;
-				cost = 0;
-				sb = new StringBuilder();
 				while(!done) {
 					latter = next.get(former);
 					move(former, latter);
-					cost += graph.weights.get(movedChar);
 					former = latter;
-					count++;
 					if (former.equals(graph.finishState)) {
 						done = true;
 						break;
 					}
-					sb.append(" ");	
+					System.out.print(" ");	
 				}
-				p.print(count);
-				p.print(" ");
-				p.println(cost);
-				p.println(sb.toString());
+				System.out.println();
 			}
-			
 		} 
 		catch (IOException e) {
-			e.printStackTrace();
+				e.printStackTrace();
 		}
-		p.close();
+		long time = System.currentTimeMillis() - startTime;
+		
+		System.out.println(time);
 	}
 
 	private static void move(String former, String latter) {
 		if (former.charAt(0)=='G') {
-			sb.append(latter.charAt(0));
-			movedChar = latter.charAt(0);
+			System.out.print(latter.charAt(0));
 			if (latter.charAt(1)=='G') {
-				sb.append("L");
+				System.out.print("L");
 			}
 			else if (latter.charAt(3)=='G') {
-				sb.append("U");
+				System.out.print("U");
 			}
 		}
 		else if (former.charAt(1)=='G') {
-			sb.append(latter.charAt(1));
-			movedChar = latter.charAt(1);
+			System.out.print(latter.charAt(1));
 			if (latter.charAt(0)=='G') {
-				sb.append("R");
+				System.out.print("R");
 			}
 			else if (latter.charAt(2)=='G'){
-				sb.append("L");
+				System.out.print("L");
 			}
 			else if (latter.charAt(4)=='G') {
-				sb.append("U");
+				System.out.print("U");
 			}
 		}
 		else if(former.charAt(2)=='G') {
-			movedChar = latter.charAt(2);
-			sb.append(latter.charAt(2));
+			System.out.print(latter.charAt(2));
 			if (latter.charAt(1)=='G') {
-				sb.append("R");
+				System.out.print("R");
 			}
 			else if (latter.charAt(5)=='G'){
-				sb.append("U");
+				System.out.print("U");
 			}
 		}
 		else if(former.charAt(3)=='G') {
-			sb.append(latter.charAt(3));
-			movedChar = latter.charAt(3);
+			System.out.print(latter.charAt(3));
 			if (latter.charAt(0)=='G') {
-				sb.append("D");
+				System.out.print("D");
 			}
 			else if (latter.charAt(4)=='G'){
-				sb.append("L");
+				System.out.print("L");
 			}
 			else if (latter.charAt(6)=='G') {
-				sb.append("U");
+				System.out.print("U");
 			}
 		}
 		else if(former.charAt(4)=='G') {
-			sb.append(latter.charAt(4));
-			movedChar = latter.charAt(4);
+			System.out.print(latter.charAt(4));
 			if (latter.charAt(1)=='G') {
-				sb.append("D");
+				System.out.print("D");
 			}
 			else if (latter.charAt(3)=='G'){
-				sb.append("R");
+				System.out.print("R");
 			}
 			else if (latter.charAt(5)=='G') {
-				sb.append("L");
+				System.out.print("L");
 			}
 			else if (latter.charAt(7)=='G') {
-				sb.append("U");
+				System.out.print("U");
 			}
 		}
 		else if(former.charAt(5)=='G') {
-			sb.append(latter.charAt(5));
-			movedChar = latter.charAt(5);
+			System.out.print(latter.charAt(5));
 			if (latter.charAt(2)=='G') {
-				sb.append("D");
+				System.out.print("D");
 			}
 			else if (latter.charAt(4)=='G'){
-				sb.append("R");
+				System.out.print("R");
 			}
 			else if (latter.charAt(8)=='G') {
-				sb.append("U");
+				System.out.print("U");
 			}
 		}
 		else if(former.charAt(6)=='G') {
-			sb.append(latter.charAt(6));
-			movedChar =latter.charAt(6);
+			System.out.print(latter.charAt(6));
 			if (latter.charAt(7)=='G') {
-				sb.append("L");
+				System.out.print("L");
 			}
 			else if (latter.charAt(3)=='G'){
-				sb.append("D");
+				System.out.print("D");
 			}
 		}
 		else if(former.charAt(7)=='G') {
-			sb.append(latter.charAt(7));
-			movedChar = latter.charAt(7);
+			System.out.print(latter.charAt(7));
 			if (latter.charAt(4)=='G') {
-				sb.append("D");
+				System.out.print("D");
 			}
 			else if (latter.charAt(6)=='G'){
-				sb.append("R");
+				System.out.print("R");
 			}
 			else if (latter.charAt(8)=='G') {
-				sb.append("L");
+				System.out.print("L");
 			}
 		}
 		else if(former.charAt(8)=='G') {
-			latter.charAt(8);
-			sb.append(latter.charAt(8));
-			movedChar = latter.charAt(8);
+			System.out.print(latter.charAt(8));
 			if (latter.charAt(7)=='G') {
-				sb.append("R");
+				System.out.print("R");
 			}
 			else if (latter.charAt(5)=='G'){
-				sb.append("D");
+				System.out.print("D");
 			}
 		}
 		else {
