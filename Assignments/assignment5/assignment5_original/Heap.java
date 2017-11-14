@@ -7,7 +7,11 @@ public class Heap implements Cloneable{
 	
 
 	public Heap clone() throws CloneNotSupportedException {
-		return (Heap) super.clone();
+		Heap clone;
+		clone = (Heap) super.clone();
+		clone.heapList = (ArrayList<Node>)this.heapList.clone();
+		clone.map 	   = (HashMap<String, Integer>)this.map.clone();
+		return clone;
     }
 
 	// index starts from one instead of zero

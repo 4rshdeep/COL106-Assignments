@@ -26,6 +26,8 @@ class Graph {
 	HashMap<String, Integer> clonedDistance;
 	HashMap<String, Integer> clonedCost;
 	Heap clonedHeap;
+
+	HashMap<String, HashMap<String, Integer>> storedCost;
 	
 	public Graph(int n) {
 		adjMap   = new HashMap<String, ArrayList<String>>();
@@ -34,143 +36,118 @@ class Graph {
 		weights  = new HashMap<Character, Integer>();
 		distance = new HashMap<String, Integer>();
 		cost	 = new HashMap<String, Integer>();
+		storedCost = new HashMap<String, HashMap<String, Integer>>();
 	}
 	int MAX_VALUE = 47483647;
 	
 	
-	void makeGraph(String str) {
-		Path path = Paths.get(str);
-		try {
-			InputStream in = Files.newInputStream(path);
-			BufferedReader reader = new BufferedReader(new InputStreamReader(in));
-			vertices = Integer.parseInt(reader.readLine());
-			String line;
-			StringBuilder sb;
-			ArrayList<String> arraylist;
-			for (int i = 0; i < vertices; i++) {
-				line = reader.readLine();
-				sb = new StringBuilder(line);
-				arraylist = new ArrayList<String>();
-				if (sb.charAt(0)=='G') {//swap 0 and 1
-					arraylist.add(swap(line, 0, 1));
-					arraylist.add(swap(line, 0, 3)); 
-				}
-				else if(sb.charAt(1)=='G') {
-					arraylist.add(swap(line, 0, 1));
-					arraylist.add(swap(line, 4, 1));
-					arraylist.add(swap(line, 2, 1));
-				}
-				else if(sb.charAt(2)=='G') {
-					arraylist.add(swap(line, 1, 2));
-					arraylist.add(swap(line, 2, 5));
-				}
-				else if(sb.charAt(3)=='G') {
-					arraylist.add(swap(line, 0, 3));
-					arraylist.add(swap(line, 4, 3));
-					arraylist.add(swap(line, 6, 3));
-				}
-				else if(sb.charAt(4)=='G') {
-					arraylist.add(swap(line, 1, 4));
-					arraylist.add(swap(line, 3, 4));
-					arraylist.add(swap(line, 5, 4));
-					arraylist.add(swap(line, 7, 4));
-				}
-				else if(sb.charAt(5)=='G') {
-					arraylist.add(swap(line, 2, 5));
-					arraylist.add(swap(line, 4, 5));
-					arraylist.add(swap(line, 8, 5));
-				}
-				else if(sb.charAt(6)=='G') {
-					arraylist.add(swap(line, 3, 6));
-					arraylist.add(swap(line, 6, 7));
-				}
-				else if(sb.charAt(7)=='G') {
-					arraylist.add(swap(line, 4, 7));
-					arraylist.add(swap(line, 6, 7));
-					arraylist.add(swap(line, 8, 7));
-				}
-				else if(sb.charAt(8)=='G') {
-					arraylist.add(swap(line, 5, 8));
-					arraylist.add(swap(line, 7, 8));
-				}
-				adjMap.put(line, arraylist);
-				if (line.equals(startState)) {
-					heap.insert(new Node(0, startState));
-					cost.put(startState, 0);
-					distance.put(startState, 0);
-				}
-				else {
-					heap.insert(new Node(MAX_VALUE, line));
-					cost.put(line, MAX_VALUE);
-					distance.put(line, MAX_VALUE);
-				}
+	void makeGraph(Vector<String> vec) {
+		
+		StringBuilder sb;
+		ArrayList<String> arraylist;
+		for (String line : vec) {
+	    	sb = new StringBuilder(line);
+			arraylist = new ArrayList<String>();
+			if (sb.charAt(0)=='G') {//swap 0 and 1
+				arraylist.add(swap(line, 0, 1));
+				arraylist.add(swap(line, 0, 3)); 
 			}
-		} catch (IOException e) {
-			e.printStackTrace();
+			else if(sb.charAt(1)=='G') {
+				arraylist.add(swap(line, 0, 1));
+				arraylist.add(swap(line, 4, 1));
+				arraylist.add(swap(line, 2, 1));
+			}
+			else if(sb.charAt(2)=='G') {
+				arraylist.add(swap(line, 1, 2));
+				arraylist.add(swap(line, 2, 5));
+			}
+			else if(sb.charAt(3)=='G') {
+				arraylist.add(swap(line, 0, 3));
+				arraylist.add(swap(line, 4, 3));
+				arraylist.add(swap(line, 6, 3));
+			}
+			else if(sb.charAt(4)=='G') {
+				arraylist.add(swap(line, 1, 4));
+				arraylist.add(swap(line, 3, 4));
+				arraylist.add(swap(line, 5, 4));
+				arraylist.add(swap(line, 7, 4));
+			}
+			else if(sb.charAt(5)=='G') {
+				arraylist.add(swap(line, 2, 5));
+				arraylist.add(swap(line, 4, 5));
+				arraylist.add(swap(line, 8, 5));
+			}
+			else if(sb.charAt(6)=='G') {
+				arraylist.add(swap(line, 3, 6));
+				arraylist.add(swap(line, 6, 7));
+			}
+			else if(sb.charAt(7)=='G') {
+				arraylist.add(swap(line, 4, 7));
+				arraylist.add(swap(line, 6, 7));
+				arraylist.add(swap(line, 8, 7));
+			}
+			else if(sb.charAt(8)=='G') {
+				arraylist.add(swap(line, 5, 8));
+				arraylist.add(swap(line, 7, 8));
+			}
+			adjMap.put(line, arraylist);
+			cost.put(line, MAX_VALUE);
+			distance.put(line, MAX_VALUE);
+			
 		}
-		try {
-			clonedHeap = heap.clone();
-		} catch (CloneNotSupportedException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		// // System.out.println(clonedHeap.heapList);
-		// clonedCost = (HashMap<String, Integer>)cost.clone();
-		// clonedDistance = (HashMap<String, Integer>)distance.clone();
-		// // printMap(clonedDistance);
-	}
+		clonedCost = (HashMap<String, Integer>)cost.clone();
+		clonedDistance = (HashMap<String, Integer>)distance.clone();
+ 	}
 	
 	static String swap(String str, int a, int b) {
 		StringBuilder sb = new StringBuilder(str);
 		char temp = sb.charAt(a);
 		sb.setCharAt(a, sb.charAt(b));
 		sb.setCharAt(b, temp);
-		return sb.toString();
-	}
-	
-	public static void printMap(Map mp) {
-	    Iterator it = mp.entrySet().iterator();
-	    while (it.hasNext()) {
-	        Map.Entry pair = (Map.Entry)it.next();
-	        System.out.println(pair.getKey() + " = " + pair.getValue());
-//	        it.remove(); // avoids a ConcurrentModificationException
-	    }
+		String ret = sb.toString();
+		HashMap<String, Integer> mp = new HashMap<String, Integer>();
+		return ;
 	}
 
-	// int ITERATIONS = 10;
-	// int num_iter = 0;
+	// public static void printMap(Map mp) {
+	//     Iterator it = mp.entrySet().iterator();
+	//     while (it.hasNext()) {
+	//         Map.Entry pair = (Map.Entry)it.next();
+	//         System.out.println(pair.getKey() + " = " + pair.getValue());
+	//     }
+	// }
+
 	void dijkstra() {
-		// System.out.println(1);
 		int w, d1, d2;
 		Node min_distance_node;
-		// printMap(previous);
-		// distance = (HashMap<String, Integer>)clonedDistance.clone();
-		// try {
-		// 	heap 	 = clonedHeap.clone();
-		// } catch (CloneNotSupportedException e) {
-		// 	e.printStackTrace();
-		// }
-		// cost     = (HashMap<String, Integer>)clonedCost.clone();
-//TODO dijkstra till target is not min
-		boolean done = false;
-		while ((!heap.isEmpty())&&(!done)) {
+
+		// initialisation dijkstra
+		heap.insert(new Node(0, startState));
+		cost.put(startState, 0);
+		distance.put(startState, 0);
+		
+		while (!heap.isEmpty()) {
 			min_distance_node = heap.extractMin();
-			// if ((min_distance_node.str).equals(finishState)) {
-			// 	done = true;
-			// }
+			if ((min_distance_node.str).equals(finishState)) {
+				break;
+			}
 			int cost_extracted_node = cost.get(min_distance_node.str)+1;
 			ArrayList<String> list = adjMap.get(min_distance_node.str);
 			for (ListIterator<String> iter = list.listIterator(); iter.hasNext(); ) {
+
 			    String nStr = iter.next();
 			    w = weight(min_distance_node.str, nStr);
 			    d1 = distance.get(min_distance_node.str) + w;
 			    d2 = distance.get(nStr);
 			    if(d2 > d1) {
+			    	if (heap.map.containsKey(nStr)) {
+			    		heap.decreaseKey(nStr, d1);
+			    	}
+			    	else {
+			    		heap.insert(new Node(d1, nStr));	
+			    	}
 			    	distance.put(nStr, d1);
-			    	heap.decreaseKey(nStr, d1);
-			    	//set the previous
-			    	// System.out.println(nStr + " " +  min_distance_node.str);
-			    	previous.put(nStr, min_distance_node.str);//Can put the movement here
+			    	previous.put(nStr, min_distance_node.str);
 			    	cost.put(nStr, cost_extracted_node);
 			    }
 			    if (d2 == d1) {
@@ -182,7 +159,6 @@ class Graph {
 			    }
 			 }
 		}
-		// System.out.println("end");
 	}
 
 	private int weight(String former, String latter) {

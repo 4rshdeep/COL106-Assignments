@@ -1,11 +1,16 @@
+import java.io.BufferedOutputStream;
 import java.io.BufferedReader;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.OutputStream;
+import java.io.PrintWriter;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.HashMap;
+import java.util.*;
 //TODO store only the graph needed by using a queue
 //TODO Stop when final state is reached in djikstra's
 
@@ -13,13 +18,13 @@ public class Puzzle {
 	static StringBuilder sb;
 	static int cost;
 	static char movedChar;
+	static Vector<String> vec = new Vector<String>();
 
-	static void generatePermutations(StringBuilder sb, int size) {
+	static Vector<String> generatePermutations(StringBuilder sb, int size) {
 		if (size==1) {
-			System.out.println(sb);
+			vec.add(sb.toString());
 		}
 		char fChar, lChar;
-		
 		for (int i = 0; i < size; i++) {
 			generatePermutations(sb, size-1);
 			if ((size%2)==1) {//if size is odd swap first and last
@@ -35,22 +40,44 @@ public class Puzzle {
 				sb.setCharAt(size-1, fChar);
 			}
 		}
+		return vec;
 	}
+
 	
 	public static void main(String[] args) {
-		// System.out.println((Integer.MAX_VALUE+10)& 0x7fffffff);
-		long startTime = System.currentTimeMillis();
+		long startTime1 = System.currentTimeMillis();
+		int numIter = 0;
+		
 		Path path = Paths.get(args[0]);
 		InputStream in = null;
+		FileOutputStream fileOut = null;
+		try {
+			fileOut = new FileOutputStream(args[1]);
+		} catch (FileNotFoundException e1) {
+			e1.printStackTrace();
+		}
+		BufferedOutputStream bout = new BufferedOutputStream(fileOut);
+		PrintWriter p = new PrintWriter(bout);
 		try {
 			in = Files.newInputStream(path);
 			BufferedReader reader = new BufferedReader(new InputStreamReader(in));
 			int numInput = Integer.parseInt(reader.readLine());
-			// assume numInput to be 1
-			
+			Vector<String> v = generatePermutations(new StringBuilder("12345678G"), 9);
 			boolean done = false;
+			Graph graph = null;
+			long startTime = System.currentTimeMillis();
+			long time = System.currentTimeMillis();
 			for (int i=0; i<numInput; i++) {
-				Graph graph = new Graph(362880);
+				time = System.currentTimeMillis() - startTime;
+				startTime = System.currentTimeMillis();
+				if (i!=0) {
+					p.println(time);
+				}
+					
+
+				Graph prevGraph = graph;
+
+				graph = new Graph(362880);
 				String nextLine = reader.readLine();
 				String[] strings = nextLine.split("\\s+");
 				graph.startState = strings[0];
@@ -58,9 +85,20 @@ public class Puzzle {
 
 				nextLine = reader.readLine();
 
+				if (i == 0) {
+					graph.makeGraph(v);
+				}
+				else {
+					graph.adjMap         = (HashMap<String, ArrayList<String>>)prevGraph.adjMap;
+					graph.cost 	         = (HashMap<String, Integer>)prevGraph.clonedCost.clone();
+					graph.clonedCost     = (HashMap<String, Integer>)prevGraph.clonedCost.clone();
+					graph.distance       = (HashMap<String, Integer>)prevGraph.clonedDistance.clone();
+					graph.clonedDistance = (HashMap<String, Integer>)prevGraph.clonedDistance.clone();
+				}
+
 				if (strings[0].equals(strings[1])) {
-					System.out.println("0 0");
-					System.out.println();
+					p.println("0 0");
+					p.println();
 					continue;
 				}
 
@@ -73,28 +111,21 @@ public class Puzzle {
 				graph.weights.put('6', Integer.parseInt(strings[5]));
 				graph.weights.put('7', Integer.parseInt(strings[6]));
 				graph.weights.put('8', Integer.parseInt(strings[7]));
-			
-				// if (done = false) {
-					graph.makeGraph("perms.txt");
-					// done = true;
-				// }
+				
+				
 			
 				// graph.previous
 				graph.dijkstra();
 				String latter = graph.finishState;
 				
 				String former;
-				// StringBuilder sb = new StringBuilder();
-				// System.out.println(graph.previous);
 				HashMap<String, String> next = new HashMap<String, String>();
 				if (graph.previous.get(latter) == null) {
-						System.out.println("-1 -1");
-						System.out.println();
+						p.println("-1 -1");
+						p.println();
 						continue;		
 				}
-				done = false;
 				while(!latter.equals(graph.startState)) {
-					// System.out.println("here");
 					former = graph.previous.get(latter);
 					next.put(former, latter);
 					latter = former;
@@ -119,18 +150,21 @@ public class Puzzle {
 					}
 					sb.append(" ");	
 				}
-				System.out.print(count);
-				System.out.print(" ");
-				System.out.println(cost);
-				System.out.println(sb.toString());
+				p.print(count);
+				p.print(" ");
+				p.println(cost);
+				p.println(sb.toString());
+				
 			}
+			
 		} 
 		catch (IOException e) {
 				e.printStackTrace();
 		}
-		long time = System.currentTimeMillis() - startTime;
-		
-		System.out.println(time);
+		long time2 = System.currentTimeMillis()-startTime1;
+		p.print("Total Time ");
+		p.println(time2);
+		p.close();
 	}
 
 	private static void move(String former, String latter) {
