@@ -25,9 +25,7 @@ class Graph {
 	
 	HashMap<String, Integer> clonedDistance;
 	HashMap<String, Integer> clonedCost;
-	
-	HashMap<String, Character> charMoved;
-	HashMap<String, String> strMoved;
+	Heap clonedHeap;
 
 	public Graph(int n) {
 		adjMap   = new HashMap<String, ArrayList<String>>();
@@ -36,8 +34,6 @@ class Graph {
 		weights  = new HashMap<Character, Integer>();
 		distance = new HashMap<String, Integer>();
 		cost	 = new HashMap<String, Integer>();
-		charMoved= new HashMap<String, Character>();
-		strMoved = new HashMap<String, String>();
 	}
 	int MAX_VALUE =  147483647;	
 	
@@ -99,32 +95,12 @@ class Graph {
 		clonedDistance = (HashMap<String, Integer>)distance.clone();
  	}
 	
-	String swap(String str, int a, int b) {
+	static String swap(String str, int a, int b) {
 		StringBuilder sb = new StringBuilder(str);
 		char temp = sb.charAt(a);
 		sb.setCharAt(a, sb.charAt(b));
 		sb.setCharAt(b, temp);
 		String ret = sb.toString();
-
-		// b is the position of G
-		char moved = ret.charAt(b);
-		charMoved.put(str.concat(ret), moved);
-
-		int dist = b - str.indexOf(moved);
-
-		if (dist == 1) {
-			strMoved.put(str.concat(ret), (String.valueOf(moved)).concat("R"));
-		}
-		else if (dist==-1) {
-			strMoved.put(str.concat(ret), (String.valueOf(moved)).concat("L"));
-		}
-		else if (dist == 3) {
-			strMoved.put(str.concat(ret), (String.valueOf(moved)).concat("D"));
-		}
-		else if (dist == -3) {
-			strMoved.put(str.concat(ret), (String.valueOf(moved)).concat("U"));
-		}
-
 		return ret;
 	}
 
